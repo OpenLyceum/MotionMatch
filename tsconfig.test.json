@@ -4,5 +4,5 @@
     "noEmit": true,
     "types": ["node", "vite/client", "vitest/globals", "web-bluetooth", "w3c-web-usb"]
   },
-  "include": ["tests"]
+  "include": ["tests", "src/**/*.d.ts"]
 }
