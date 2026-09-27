@@ -108,3 +108,27 @@ npm run lint && npm run check && npm run build && npm test
 
 `npm run test:fuzz:quick` after any change to the sensor path — it is the only
 check that constructs both screens in a real browser.
+
+## Accessibility
+
+Follows the shared [OpenLyceum accessibility convention](https://github.com/OpenLyceum/Baton/blob/main/ACCESSIBILITY.md).
+A11y strings live under the `a11y` key of each locale JSON, read through `StringManager`.
+
+- Screen summaries: `src/sensor/view/MotionSensorScreenSummaryContent.ts`, `src/simulation/view/SimulationScreenSummaryContent.ts`
+- Keyboard Shortcuts dialog: `src/common/view/MotionMatchKeyboardHelpContent.ts`
+- Keyboard-draggable objects: `src/common/view/PlayAreaNode.ts`
+
+## Testing
+
+Vitest on `happy-dom` with the template `tests/setup.ts`; tests live only under `tests/`.
+
+| Path | Covers |
+|---|---|
+| `tests/common/model/MotionMatchModel.test.ts` | unit tests |
+| `tests/common/model/motionMath.test.ts` | unit tests |
+| `tests/common/model/profiles.test.ts` | unit tests |
+| `tests/common/model/scoring.test.ts` | unit tests |
+| `tests/memory-leak.test.ts` | `describeDisposalLeaks` over the sim's disposables (shared harness `tests/helpers/memoryLeak.ts`) |
+| `tests/sensor/model/PascoMotionProtocol.test.ts` | unit tests |
+| `tests/sensor/model/UsbMotionSensor.test.ts` | unit tests |
+| `tests/fuzz/fuzz.spec.ts` | template fuzz smoke (pointer + keyboard, `?ea`) — `npm run test:fuzz` |
