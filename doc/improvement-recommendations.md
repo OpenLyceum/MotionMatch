@@ -1,8 +1,8 @@
 # Improvement Recommendations — Motion Match
 
-Non-test recommendations for `SceneryStackTemplate/`, grouped by impact. Each item
-references the concrete file(s) involved so an editor (human or agent) can act
-without re-exploration.
+These notes were written against the SceneryStack template, not this sim's tree.
+Paths such as `src/simulation/view/SimulationScreenView.ts` are not in Motion Match.
+Treat the list as historical template feedback.
 
 ## Correctness / hardening
 
