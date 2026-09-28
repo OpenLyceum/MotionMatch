@@ -33,7 +33,9 @@ the profiles, the derivative relationship and the scoring rule are in
 | `src/common/view/PlayAreaNode.ts` | Track, sensor, walker + drag / keyboard listeners |
 | `src/simulation/`, `src/sensor/` | Thin screen packages; the models are ten lines each |
 
-## The two screens are one view
+## Model
+
+### The two screens are one view
 
 `SimulationModel` and `MotionSensorModel` differ only in which
 `TPositionSource` they construct, and both screens instantiate the same
@@ -43,29 +45,14 @@ the profiles, the derivative relationship and the scoring rule are in
 recognise the sensor screen instantly, and sameness by construction is the only
 way to guarantee that.
 
-## Things that will bite
+## Accessibility
 
-- **Web Bluetooth needs a user gesture** — `requestDevice()` must be reached
-  directly from the Connect button. Do not add an `await` ahead of it.
-- **`connect()` never rejects.** Outcomes land on Properties. A dismissed picker
-  throws `DeviceSelectionCancelled` internally and is not shown as an error.
-- **A streaming device must be told to stop.** Clearing a timer silences a
-  polled sensor; a streamed one keeps its own clock until `STOP_SAMPLING`
-  arrives, and USB keeps it powered. `deviceIsSampling` (a stop is owed) is
-  deliberately separate from `draining` (the read loop is alive) — never merge
-  them.
-- **Never accumulate run time in a float.** Sample times are `index × period`.
-  An earlier version drifted and ended runs a sample early; tests pin it.
-- **`dispose()` must stay idempotent** — axon Properties throw on double
-  dispose, and the memory-leak suite disposes twice on purpose.
-- **`AxisLine` is shown only in velocity mode**; in position mode (0–2 m) it
-  would sit on the bottom border and say nothing.
-- **`ScreenView` throws if you set `pdomOrder` on itself** — it lives on a
-  wrapper `Node`.
-- **Preferences dialog is always light** — use `controlSurfaceTextColorProperty`
-  there, never `textColorProperty`.
-- **`LocalizedString` suffixes every leaf key**: profile `a`'s description is
-  `profiles.aStringProperty`. Getting it wrong renders the literal `undefined`.
+Follows the shared [OpenLyceum accessibility convention](https://github.com/OpenLyceum/Baton/blob/main/ACCESSIBILITY.md).
+A11y strings live under the `a11y` key of each locale JSON, read through `StringManager`.
+
+- Screen summaries: `src/sensor/view/MotionSensorScreenSummaryContent.ts`, `src/simulation/view/SimulationScreenSummaryContent.ts`
+- Keyboard Shortcuts dialog: `src/common/view/MotionMatchKeyboardHelpContent.ts`
+- Keyboard-draggable objects: `src/common/view/PlayAreaNode.ts`
 
 ## Compliance carve-outs
 
@@ -75,7 +62,22 @@ Inherited from the template; rationale unchanged (`lodash`, `three`,
 `brace-expansion` pinned for advisories SceneryStack has not yet re-pinned).
 Dependabot ignores those three names.
 
-## Hardware testing
+## Testing
+
+Vitest on `happy-dom` with the template `tests/setup.ts`; tests live only under `tests/`.
+
+| Path | Covers |
+|---|---|
+| `tests/common/model/MotionMatchModel.test.ts` | unit tests |
+| `tests/common/model/motionMath.test.ts` | unit tests |
+| `tests/common/model/profiles.test.ts` | unit tests |
+| `tests/common/model/scoring.test.ts` | unit tests |
+| `tests/memory-leak.test.ts` | `describeDisposalLeaks` over the sim's disposables (shared harness `tests/helpers/memoryLeak.ts`) |
+| `tests/sensor/model/PascoMotionProtocol.test.ts` | unit tests |
+| `tests/sensor/model/UsbMotionSensor.test.ts` | unit tests |
+| `tests/fuzz/fuzz.spec.ts` | template fuzz smoke (pointer + keyboard, `?ea`) — `npm run test:fuzz` |
+
+### Hardware testing
 
 Needs a PS-3219, Chrome/Edge/Opera, and HTTPS or `localhost`. The panel offers
 one Connect button per transport the browser supports — Bluetooth and USB — so
@@ -109,26 +111,28 @@ npm run lint && npm run check && npm run build && npm test
 `npm run test:fuzz:quick` after any change to the sensor path — it is the only
 check that constructs both screens in a real browser.
 
-## Accessibility
+## Development notes
 
-Follows the shared [OpenLyceum accessibility convention](https://github.com/OpenLyceum/Baton/blob/main/ACCESSIBILITY.md).
-A11y strings live under the `a11y` key of each locale JSON, read through `StringManager`.
+### Things that will bite
 
-- Screen summaries: `src/sensor/view/MotionSensorScreenSummaryContent.ts`, `src/simulation/view/SimulationScreenSummaryContent.ts`
-- Keyboard Shortcuts dialog: `src/common/view/MotionMatchKeyboardHelpContent.ts`
-- Keyboard-draggable objects: `src/common/view/PlayAreaNode.ts`
-
-## Testing
-
-Vitest on `happy-dom` with the template `tests/setup.ts`; tests live only under `tests/`.
-
-| Path | Covers |
-|---|---|
-| `tests/common/model/MotionMatchModel.test.ts` | unit tests |
-| `tests/common/model/motionMath.test.ts` | unit tests |
-| `tests/common/model/profiles.test.ts` | unit tests |
-| `tests/common/model/scoring.test.ts` | unit tests |
-| `tests/memory-leak.test.ts` | `describeDisposalLeaks` over the sim's disposables (shared harness `tests/helpers/memoryLeak.ts`) |
-| `tests/sensor/model/PascoMotionProtocol.test.ts` | unit tests |
-| `tests/sensor/model/UsbMotionSensor.test.ts` | unit tests |
-| `tests/fuzz/fuzz.spec.ts` | template fuzz smoke (pointer + keyboard, `?ea`) — `npm run test:fuzz` |
+- **Web Bluetooth needs a user gesture** — `requestDevice()` must be reached
+  directly from the Connect button. Do not add an `await` ahead of it.
+- **`connect()` never rejects.** Outcomes land on Properties. A dismissed picker
+  throws `DeviceSelectionCancelled` internally and is not shown as an error.
+- **A streaming device must be told to stop.** Clearing a timer silences a
+  polled sensor; a streamed one keeps its own clock until `STOP_SAMPLING`
+  arrives, and USB keeps it powered. `deviceIsSampling` (a stop is owed) is
+  deliberately separate from `draining` (the read loop is alive) — never merge
+  them.
+- **Never accumulate run time in a float.** Sample times are `index × period`.
+  An earlier version drifted and ended runs a sample early; tests pin it.
+- **`dispose()` must stay idempotent** — axon Properties throw on double
+  dispose, and the memory-leak suite disposes twice on purpose.
+- **`AxisLine` is shown only in velocity mode**; in position mode (0–2 m) it
+  would sit on the bottom border and say nothing.
+- **`ScreenView` throws if you set `pdomOrder` on itself** — it lives on a
+  wrapper `Node`.
+- **Preferences dialog is always light** — use `controlSurfaceTextColorProperty`
+  there, never `textColorProperty`.
+- **`LocalizedString` suffixes every leaf key**: profile `a`'s description is
+  `profiles.aStringProperty`. Getting it wrong renders the literal `undefined`.
