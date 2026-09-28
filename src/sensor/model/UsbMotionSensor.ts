@@ -119,6 +119,12 @@ export class UsbMotionSensor implements TMotionSensorDevice {
   private readonly probeOnly: boolean;
   /** Largest transfer the IN endpoint will accept, from its descriptor. */
   private inPacketBytes = TRANSFER_BYTES;
+  /**
+   * The one IN transfer the browser is holding for us, if any. WebUSB cannot
+   * cancel a transfer, so one that outruns its deadline is kept here and awaited
+   * again by the next read rather than abandoned — see {@link transferIn}.
+   */
+  private pendingIn: Promise<USBInTransferResult> | null = null;
 
   /** Raw bytes of the last IN transfer, for `?showDiagnostics=true`. */
   public diagnosticText = "";
@@ -329,6 +335,7 @@ export class UsbMotionSensor implements TMotionSensorDevice {
     this.inEndpoint = 0;
     this.outEndpoint = 0;
     this.exchanging = false;
+    this.pendingIn = null;
     if (!device) {
       return;
     }
@@ -415,10 +422,17 @@ export class UsbMotionSensor implements TMotionSensorDevice {
       let body: Uint8Array;
       try {
         const transfer = await this.transferIn();
+        if (!this.draining) {
+          // Stopped while the read was in flight; a poll may own the endpoint now.
+          return;
+        }
         this.diagnosticText = Array.from(transfer, (byte) => byte.toString(16).padStart(2, "0")).join(" ");
         body = usbPacketBody(transfer);
         consecutiveFailures = 0;
       } catch (error) {
+        if (!this.draining) {
+          return;
+        }
         consecutiveFailures += 1;
         this.log(`stream read failed (${consecutiveFailures}):`, error);
         if (consecutiveFailures >= STREAM_FAILURE_TOLERANCE) {
@@ -518,12 +532,31 @@ export class UsbMotionSensor implements TMotionSensorDevice {
    * A bulk IN with nothing pending never returns — WebUSB has no timeout and no
    * way to cancel — so the deadline has to race the transfer rather than being
    * checked around it. Getting that wrong once left `exchanging` true forever
-   * and failed every subsequent poll with "already in progress". The abandoned
-   * transfer may still resolve later; its data is dropped, which costs at most
-   * one sample.
+   * and failed every subsequent poll with "already in progress".
+   *
+   * A transfer that loses the race is not abandoned: it stays queued in the
+   * browser and would swallow the next packet the device sends. Issuing a fresh
+   * transfer on each call therefore left every later read one packet behind —
+   * each answer consumed by a dead read, each live read timing out and leaving
+   * another dead one — so a sensor ranging perfectly well looked silent forever.
+   * Instead the outstanding transfer is kept in {@link pendingIn} and the next
+   * call waits on it, so there is never more than one in flight.
    */
   private async transferIn(): Promise<Uint8Array> {
     const device = this.requireDevice();
+    if (this.pendingIn === null) {
+      const pending = device.transferIn(this.inEndpoint, this.inPacketBytes);
+      this.pendingIn = pending;
+      // Cleared on settling, whoever is (or is no longer) waiting on it.
+      const settle = () => {
+        if (this.pendingIn === pending) {
+          this.pendingIn = null;
+        }
+      };
+      pending.then(settle, settle);
+    }
+    const pending = this.pendingIn;
+
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
     const expired = new Promise<never>((_resolve, reject) => {
       timeoutId = setTimeout(
@@ -533,7 +566,7 @@ export class UsbMotionSensor implements TMotionSensorDevice {
     });
 
     try {
-      const result = await Promise.race([device.transferIn(this.inEndpoint, this.inPacketBytes), expired]);
+      const result = await Promise.race([pending, expired]);
       if (result.status === "stall") {
         // Clearing is the documented recovery, and the only alternative is to
         // keep pushing at a halted endpoint until the device drops off the bus.

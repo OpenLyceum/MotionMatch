@@ -7,12 +7,13 @@
  * does, so a stop that is skipped is a stop that never happens.
  */
 
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { UsbMotionSensor } from "../../../src/sensor/model/UsbMotionSensor.js";
 
 const START_SAMPLING = 0x06;
 const STOP_SAMPLING = 0x07;
 const SET_SAMPLE_PERIOD = 0x01;
+const READ_ONE_SAMPLE = 0x05;
 
 /** `[serviceId, characteristicId, opcode, ...]` — the opcode of a written frame. */
 function opcodeOf(frame: Uint8Array): number | undefined {
@@ -106,6 +107,28 @@ class FakeUsbDevice {
   }
 }
 
+/**
+ * Reads the way a real browser queues them: every transfer waits until the
+ * device sends something, and packets go to the oldest waiting transfer —
+ * including one the client has stopped listening to.
+ */
+class QueuedUsbDevice extends FakeUsbDevice {
+  private readonly waiting: ((result: USBInTransferResult) => void)[] = [];
+  public transfersIssued = 0;
+
+  public override transferIn(_endpoint: number, _length: number): Promise<USBInTransferResult> {
+    this.transfersIssued += 1;
+    return new Promise((resolve) => this.waiting.push(resolve));
+  }
+
+  public send(packet: Uint8Array): void {
+    this.waiting.shift()?.({
+      status: "ok",
+      data: new DataView(packet.buffer, packet.byteOffset, packet.byteLength),
+    } as USBInTransferResult);
+  }
+}
+
 /** `[service, STREAM_DATA, sequence, echo-low, echo-high]`. */
 function streamPacket(sequence: number, echoTimeMicroseconds: number): Uint8Array {
   return new Uint8Array([0x01, 0x04, sequence, echoTimeMicroseconds & 0xff, (echoTimeMicroseconds >>> 8) & 0xff]);
@@ -174,5 +197,43 @@ describe("UsbMotionSensor streaming", () => {
   it("says nothing to a device that was never streaming", async () => {
     await sensor.stopStreaming();
     expect(device.writes).toHaveLength(0);
+  });
+});
+
+describe("UsbMotionSensor reads", () => {
+  let device: QueuedUsbDevice;
+  let sensor: UsbMotionSensor;
+
+  beforeEach(async () => {
+    device = new QueuedUsbDevice();
+    (globalThis.navigator as unknown as Record<string, unknown>)["usb"] = {
+      requestDevice: () => Promise.resolve(device),
+      getDevices: () => Promise.resolve([device]),
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+    };
+    sensor = new UsbMotionSensor(() => undefined);
+    await sensor.connect();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("does not lose the next answer to a read that timed out", async () => {
+    // Nothing comes back in time: the read gives up, but the browser still
+    // holds the transfer.
+    const late = sensor.readEchoTime();
+    const lateOutcome = expect(late).rejects.toThrow("sent nothing");
+    await vi.advanceTimersByTimeAsync(600);
+    await lateOutcome;
+
+    // The next poll's answer must reach the next poll, not the dead read.
+    const next = sensor.readEchoTime();
+    await vi.advanceTimersByTimeAsync(0);
+    device.send(new Uint8Array([0xc0, 0x00, READ_ONE_SAMPLE, 0xe8, 0x03]));
+    await expect(next).resolves.toBe(1000);
+    expect(device.transfersIssued).toBe(1);
   });
 });
