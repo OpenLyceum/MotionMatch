@@ -26,7 +26,7 @@ import {
   TickLabelSet,
   TickMarkSet,
 } from "scenerystack/bamboo";
-import { Range, Vector2 } from "scenerystack/dot";
+import { Range, toFixed, Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { Orientation } from "scenerystack/phet-core";
 import { Circle, Node, Path, Text } from "scenerystack/scenery";
@@ -319,7 +319,7 @@ export class MatchChartNode extends Node {
 
   /** Whole numbers without a decimal point, halves with one. */
   private static formatTick(value: number): string {
-    return Number.isInteger(value) ? String(value) : value.toFixed(1);
+    return Number.isInteger(value) ? String(value) : toFixed(value, 1);
   }
 
   public override dispose(): void {

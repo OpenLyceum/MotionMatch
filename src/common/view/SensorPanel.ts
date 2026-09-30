@@ -20,6 +20,7 @@
 
 import type { TReadOnlyProperty } from "scenerystack/axon";
 import { DerivedProperty, PatternStringProperty } from "scenerystack/axon";
+import { StringUtils } from "scenerystack/phetcommon";
 import { Circle, HBox, Text, VBox } from "scenerystack/scenery";
 import { PhetFont } from "scenerystack/scenery-phet";
 import { RectangularPushButton } from "scenerystack/sun";
@@ -210,7 +211,7 @@ export class SensorPanel extends MotionMatchPanel {
     );
 
     const rawPositionProperty = new PatternStringProperty(sensorStrings.rawPositionPatternStringProperty, {
-      position: new DerivedProperty([source.sensorPositionProperty], (metres) => metres.toFixed(3)),
+      position: new DerivedProperty([source.sensorPositionProperty], (metres) => StringUtils.toFixedLTR(metres, 3)),
     });
     const diagnosticsText = new Text(rawPositionProperty, {
       font: MESSAGE_FONT,

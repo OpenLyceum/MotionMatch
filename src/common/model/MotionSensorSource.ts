@@ -22,6 +22,7 @@
  */
 
 import { BooleanProperty, NumberProperty, Property, type TReadOnlyProperty } from "scenerystack/axon";
+import { toFixed } from "scenerystack/dot";
 import {
   DEFAULT_SENSOR_SAMPLE_RATE_HZ,
   MAXIMUM_CONSECUTIVE_FAILURES,
@@ -396,7 +397,7 @@ export class MotionSensorSource implements TPositionSource {
     if (this.diagnosticsEnabledProperty?.value === true) {
       const elapsedSeconds = (performance.now() - this.diagnosticsStartTimeMs) / 1000;
       // biome-ignore lint/suspicious/noConsole: Explicit hardware bring-up diagnostics.
-      console.info(`[MotionMatch sensor +${elapsedSeconds.toFixed(3)} s]`, {
+      console.info(`[MotionMatch sensor +${toFixed(elapsedSeconds, 3)} s]`, {
         EchoTimeMicroseconds: echoTimeMicroseconds,
         Position: metres,
         ...(this.device?.diagnosticText ? { RawTransfer: this.device.diagnosticText } : {}),
