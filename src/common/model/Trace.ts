@@ -12,7 +12,7 @@
  */
 
 import { DERIVATIVE_WINDOW_SAMPLES } from "../../MotionMatchConstants.js";
-import { differentiateTrailing, type Sample } from "./motionMath.js";
+import { differentiate, type Sample } from "./motionMath.js";
 
 /** Five 20 Hz samples span the requested 200 ms smoothing interval. */
 const SMOOTHING_WINDOW_SAMPLES = 5;
@@ -66,10 +66,10 @@ export class Trace {
     return this.smoothedSamples;
   }
 
-  /** The causal velocity series, recomputed lazily from finalized values. */
+  /** Centered velocity from raw positions; the newest edge is revised as samples arrive. */
   public getVelocitySamples(): readonly Sample[] {
     if (this.velocityCache === null) {
-      this.velocityCache = differentiateTrailing(this.getSmoothedPositionSamples(), DERIVATIVE_WINDOW_SAMPLES);
+      this.velocityCache = differentiate(this.samples, DERIVATIVE_WINDOW_SAMPLES);
     }
     return this.velocityCache;
   }

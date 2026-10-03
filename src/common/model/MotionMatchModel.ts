@@ -112,6 +112,7 @@ export class MotionMatchModel implements TModel {
   private sampleIndex = 0;
 
   private readonly resetRunOnChange: () => void;
+  private readonly handleSourceAvailability: (available: boolean) => void;
 
   /** Guards against a second dispose(); axon Properties throw if disposed twice. */
   private isDisposed = false;
@@ -148,6 +149,15 @@ export class MotionMatchModel implements TModel {
     };
     this.profileProperty.lazyLink(this.resetRunOnChange);
     this.graphModeProperty.lazyLink(this.resetRunOnChange);
+    this.handleSourceAvailability = (available) => {
+      if (
+        !available &&
+        (this.runStateProperty.value === RunState.COUNTDOWN || this.runStateProperty.value === RunState.RECORDING)
+      ) {
+        this.abandonRun();
+      }
+    };
+    this.source.isAvailableProperty.lazyLink(this.handleSourceAvailability);
   }
 
   /** The target curve as a function of time, for the current mode. */
@@ -180,21 +190,14 @@ export class MotionMatchModel implements TModel {
 
   /** Preview plus official samples, for drawing only. Preview samples are never scored. */
   public getDisplayTraceSamples(): readonly Sample[] {
-    const positionSamples = [
-      ...this.previewTrace.getSmoothedPositionSamples(),
-      ...this.trace.getSmoothedPositionSamples(),
-    ];
+    const positionSamples = [...this.previewTrace.getPositionSamples(), ...this.trace.getPositionSamples()];
     if (this.graphModeProperty.value === GraphMode.POSITION) {
       return positionSamples;
     }
 
-    // Differentiate the continuous combined series so velocity is meaningful
-    // at t = 0 instead of beginning with an empty edge window.
-    const displayTrace = new Trace();
-    for (const sample of positionSamples) {
-      displayTrace.add(sample.time, sample.value);
-    }
-    return displayTrace.getVelocitySamples();
+    // The official trace uses exactly the values scored. The unscored preview
+    // has its own edge window; its newest values can be revised as it grows.
+    return [...this.previewTrace.getVelocitySamples(), ...this.trace.getVelocitySamples()];
   }
 
   /** Begins the 3-2-1 lead-in. No effect unless a run can start. */
@@ -334,6 +337,7 @@ export class MotionMatchModel implements TModel {
 
     this.profileProperty.unlink(this.resetRunOnChange);
     this.graphModeProperty.unlink(this.resetRunOnChange);
+    this.source.isAvailableProperty.unlink(this.handleSourceAvailability);
     this.countdownProperty.dispose();
     this.canStartProperty.dispose();
     this.profileProperty.dispose();

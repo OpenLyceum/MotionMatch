@@ -12,6 +12,7 @@ import { StringManager } from "../../i18n/StringManager.js";
 import MotionMatchColors from "../../MotionMatchColors.js";
 import { MotionMatchPanel } from "../MotionMatchPanel.js";
 import type { MotionMatchModel } from "../model/MotionMatchModel.js";
+import { PositionSourceType } from "../model/PositionSource.js";
 import { RunState } from "../model/RunState.js";
 
 const SCORE_CARD_WIDTH = 230;
@@ -21,11 +22,20 @@ export class ScoreCardNode extends Node {
   private readonly disposeScoreCardNode: () => void;
 
   public constructor(model: MotionMatchModel) {
+    const strings = StringManager.getInstance();
     const scoreNumberProperty = new DerivedProperty([model.scoreProperty], (score) => score ?? 0);
-    const scoreStringProperty = new PatternStringProperty(
-      StringManager.getInstance().getRunStrings().scorePatternStringProperty,
-      { score: scoreNumberProperty },
-    );
+    const scoreStringProperty = new PatternStringProperty(strings.getRunStrings().scorePatternStringProperty, {
+      score: scoreNumberProperty,
+    });
+    const letterProperty = new DerivedProperty([model.profileProperty], (profile) => profile.letter);
+    const scoredPatternProperty =
+      model.sourceType === PositionSourceType.MOTION_SENSOR
+        ? strings.getMotionSensorA11yStrings().currentDetails.scoredStringProperty
+        : strings.getSimulationA11yStrings().currentDetails.scoredStringProperty;
+    const finalAnnouncementProperty = new PatternStringProperty(scoredPatternProperty, {
+      letter: letterProperty,
+      score: scoreNumberProperty,
+    });
     const liveVisibleProperty = new DerivedProperty([model.runStateProperty], (state) => state === RunState.RECORDING);
     const finalVisibleProperty = new DerivedProperty([model.runStateProperty], (state) => state === RunState.SCORED);
 
@@ -57,9 +67,19 @@ export class ScoreCardNode extends Node {
 
     super({ children: [livePanel, finalPanel] });
 
+    const announceFinalScore = (state: string) => {
+      if (state === RunState.SCORED) {
+        this.addAccessibleResponse(finalAnnouncementProperty.value);
+      }
+    };
+    model.runStateProperty.lazyLink(announceFinalScore);
+
     this.disposeScoreCardNode = () => {
-      scoreNumberProperty.dispose();
+      model.runStateProperty.unlink(announceFinalScore);
       scoreStringProperty.dispose();
+      finalAnnouncementProperty.dispose();
+      letterProperty.dispose();
+      scoreNumberProperty.dispose();
       liveVisibleProperty.dispose();
       finalVisibleProperty.dispose();
     };

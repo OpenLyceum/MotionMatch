@@ -198,6 +198,50 @@ describe("UsbMotionSensor streaming", () => {
     await sensor.stopStreaming();
     expect(device.writes).toHaveLength(0);
   });
+
+  it.each([SET_SAMPLE_PERIOD, START_SAMPLING])("stops after startup pauses at opcode %i", async (heldOpcode) => {
+    let releaseWrite: () => void = () => undefined;
+    const heldWrite = new Promise<void>((resolve) => {
+      releaseWrite = resolve;
+    });
+    const transferOut = device.transferOut.bind(device);
+    vi.spyOn(device, "transferOut").mockImplementation(async (endpoint, data) => {
+      const result = await transferOut(endpoint, data);
+      if (opcodeOf(new Uint8Array(data as ArrayBuffer)) === heldOpcode) {
+        await heldWrite;
+      }
+      return result;
+    });
+
+    const starting = sensor.startStreaming(50, () => undefined);
+    await settle();
+    const stopping = sensor.stopStreaming();
+    expect(device.writes.map(opcodeOf)).not.toContain(STOP_SAMPLING);
+    releaseWrite();
+    await Promise.all([starting, stopping]);
+    expect(device.writes.map(opcodeOf).filter((opcode) => opcode === STOP_SAMPLING)).toHaveLength(1);
+  });
+
+  it("removes its USB listener on unexpected disconnect", async () => {
+    await sensor.disconnect();
+    const addEventListener = vi.fn();
+    const removeEventListener = vi.fn();
+    (globalThis.navigator as unknown as Record<string, unknown>)["usb"] = {
+      requestDevice: () => Promise.resolve(device),
+      getDevices: () => Promise.resolve([device]),
+      addEventListener: addEventListener,
+      removeEventListener: removeEventListener,
+    };
+    const onDisconnect = vi.fn();
+    const connectedSensor = new UsbMotionSensor(onDisconnect);
+    device.closed = false;
+    await connectedSensor.connect();
+    const listener = addEventListener.mock.calls[0]?.[1] as ((event: USBConnectionEvent) => void) | undefined;
+    expect(listener).toBeDefined();
+    listener?.({ device: device } as unknown as USBConnectionEvent);
+    expect(removeEventListener).toHaveBeenCalledWith("disconnect", listener);
+    expect(onDisconnect).toHaveBeenCalledOnce();
+  });
 });
 
 describe("UsbMotionSensor reads", () => {

@@ -24,6 +24,7 @@
  * Always provide both "default" and "projector" values.
  */
 import { ProfileColorProperty } from "scenerystack/scenery";
+import { RUN_DURATION_S } from "./MotionMatchConstants.js";
 import MotionMatchNamespace from "./MotionMatchNamespace.js";
 
 const MotionMatchColors = {
@@ -114,6 +115,16 @@ const MotionMatchColors = {
     default: "#4fc3f7",
     projector: "#0b5f8a",
   }),
+
+  /** Matching time colors for the graph points, motion dots, and velocity arrows. */
+  graphPointColorProperties: Array.from(
+    { length: RUN_DURATION_S + 1 },
+    (_, index) =>
+      new ProfileColorProperty(MotionMatchNamespace, `graphPoint${index}`, {
+        default: `hsl(${196 + index * 7}, 78%, 52%)`,
+        projector: `hsl(${196 + index * 7}, 78%, 32%)`,
+      }),
+  ),
 
   /** Chart plot-area fill. */
   chartBackgroundColorProperty: new ProfileColorProperty(MotionMatchNamespace, "chartBackground", {

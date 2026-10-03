@@ -69,7 +69,9 @@ export class MotionDiagramNode extends Node {
         const sample = samples[i];
         if (sample !== undefined) {
           const dotX = transform.modelToViewX(sample.value);
-          const color = `hsl(${(196 + i * 7) % 360}, 78%, 52%)`;
+          const color =
+            MotionMatchColors.graphPointColorProperties[i % MotionMatchColors.graphPointColorProperties.length] ??
+            MotionMatchColors.traceColorProperty;
           dots.addChild(
             new Circle(4.5, {
               centerX: dotX,

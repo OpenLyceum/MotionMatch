@@ -128,7 +128,7 @@ export class MotionSensorSource implements TPositionSource {
   /** Whether a run has asked for readings, whichever mechanism is serving it. */
   private samplingRequested = false;
   private streamWatchdogId: ReturnType<typeof setTimeout> | null = null;
-  private samplesSinceStreamStart = 0;
+  private samplingGeneration = 0;
   /** Invalidates an asynchronous read if sampling stops while it is in flight. */
   private pollingGeneration = 0;
   private consecutiveFailures = 0;
@@ -277,6 +277,7 @@ export class MotionSensorSource implements TPositionSource {
       return;
     }
     this.samplingRequested = true;
+    const generation = ++this.samplingGeneration;
     this.diagnosticsStartTimeMs = performance.now();
 
     // Streaming lets the device keep time, which removes the round-trip jitter
@@ -285,30 +286,28 @@ export class MotionSensorSource implements TPositionSource {
     const device = this.device;
     if (this.streamingEnabled && device?.startStreaming) {
       this.isStreaming = true;
-      this.samplesSinceStreamStart = 0;
-      // A device can accept the start command and then push nothing — the one
-      // failure a stream cannot report, because there is no round trip left to
-      // fail. Without this the run would record a flat trace and say why
-      // nowhere, so silence is given a deadline and answered by polling.
-      this.streamWatchdogId = setTimeout(() => {
-        this.streamWatchdogId = null;
-        if (this.samplingRequested && this.isStreaming && this.samplesSinceStreamStart === 0) {
-          this.diagnosticsProperty.value = "stream silent; polling instead";
-          this.isStreaming = false;
-          device.stopStreaming?.().catch(() => undefined);
-          this.startPolling();
-        }
-      }, STREAM_SILENCE_TIMEOUT_MS);
+      this.armStreamWatchdog(device, generation);
       device
         .startStreaming(this.samplePeriodMs, (echoTimeMicroseconds) => {
+          if (generation !== this.samplingGeneration || !this.isStreaming) {
+            return;
+          }
           this.acceptReading(echoTimeMicroseconds);
+          this.armStreamWatchdog(device, generation);
         })
         .catch((error: unknown) => {
           // A device that will not stream still answers single reads, so the
           // run carries on polling rather than recording nothing at all. Unless
           // the run ended while the refusal was in flight, in which case the
           // request is gone and starting a timer now would outlive it.
+          if (generation !== this.samplingGeneration) {
+            return;
+          }
           this.isStreaming = false;
+          if (this.streamWatchdogId !== null) {
+            clearTimeout(this.streamWatchdogId);
+            this.streamWatchdogId = null;
+          }
           this.diagnosticsProperty.value = `streaming refused: ${error instanceof Error ? error.message : error}`;
           if (this.samplingRequested) {
             this.startPolling();
@@ -318,6 +317,28 @@ export class MotionSensorSource implements TPositionSource {
     }
 
     this.startPolling();
+  }
+
+  /** Keep the stream's silence deadline one timeout after its latest sample. */
+  private armStreamWatchdog(device: TMotionSensorDevice, generation: number): void {
+    if (this.streamWatchdogId !== null) {
+      clearTimeout(this.streamWatchdogId);
+    }
+    this.streamWatchdogId = setTimeout(() => {
+      this.streamWatchdogId = null;
+      if (generation !== this.samplingGeneration || !this.samplingRequested || !this.isStreaming) {
+        return;
+      }
+      this.diagnosticsProperty.value = "stream silent; polling instead";
+      this.isStreaming = false;
+      (device.stopStreaming?.() ?? Promise.resolve())
+        .catch(() => undefined)
+        .then(() => {
+          if (generation === this.samplingGeneration && this.samplingRequested) {
+            this.startPolling();
+          }
+        });
+    }, STREAM_SILENCE_TIMEOUT_MS);
   }
 
   private startPolling(): void {
@@ -333,6 +354,7 @@ export class MotionSensorSource implements TPositionSource {
 
   public stopSampling(): void {
     this.samplingRequested = false;
+    this.samplingGeneration += 1;
     this.pollingGeneration += 1;
     if (this.streamWatchdogId !== null) {
       clearTimeout(this.streamWatchdogId);
@@ -405,7 +427,6 @@ export class MotionSensorSource implements TPositionSource {
     }
 
     this.consecutiveFailures = 0;
-    this.samplesSinceStreamStart += 1;
     if (Number.isFinite(metres)) {
       // Out-of-range echoes read as wild distances; clamping keeps the walker
       // on the track and the trace on the chart instead of flinging both.

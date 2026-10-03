@@ -6,11 +6,12 @@
  * sample count, early stop — follows from the same state machine.
  */
 
+import { BooleanProperty, NumberProperty } from "scenerystack/axon";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GraphMode } from "../../../src/common/model/GraphMode.js";
 import { MotionMatchModel } from "../../../src/common/model/MotionMatchModel.js";
 import { PointerPositionSource } from "../../../src/common/model/PointerPositionSource.js";
-import { PositionSourceType } from "../../../src/common/model/PositionSource.js";
+import { PositionSourceType, type TPositionSource } from "../../../src/common/model/PositionSource.js";
 import { PROFILES } from "../../../src/common/model/profiles.js";
 import { RunState } from "../../../src/common/model/RunState.js";
 import { COUNTDOWN_S, RUN_DURATION_S, SAMPLE_PERIOD_S } from "../../../src/MotionMatchConstants.js";
@@ -127,6 +128,68 @@ describe("MotionMatchModel", () => {
     model.startRun();
     advance(model, COUNTDOWN_S + RUN_DURATION_S);
     expect(model.scoreProperty.value).toBe(100);
+  });
+
+  it("scores exact Profile I positions perfectly in velocity mode", () => {
+    const profile = PROFILES.find((p) => p.letter === "I");
+    expect(profile).toBeDefined();
+    if (profile === undefined) {
+      return;
+    }
+    model.profileProperty.value = profile;
+    model.graphModeProperty.value = GraphMode.VELOCITY;
+    source.walkerPositionProperty.value = profile.position(0);
+    model.startRun();
+    advance(model, COUNTDOWN_S);
+    for (let i = 1; i < RUN_DURATION_S / SAMPLE_PERIOD_S; i++) {
+      source.walkerPositionProperty.value = profile.position(i * SAMPLE_PERIOD_S);
+      model.step(SAMPLE_PERIOD_S);
+    }
+    model.stopRun();
+    expect(model.scoreProperty.value).toBe(100);
+  });
+
+  it("draws the position values that it scores", () => {
+    const profile = PROFILES.find((p) => p.letter === "C");
+    expect(profile).toBeDefined();
+    if (profile === undefined) {
+      return;
+    }
+    model.profileProperty.value = profile;
+    source.walkerPositionProperty.value = 1;
+    model.startRun();
+    advance(model, COUNTDOWN_S);
+    source.walkerPositionProperty.value = 1.3;
+    model.step(SAMPLE_PERIOD_S);
+    expect(model.getTraceSamples().at(-1)?.value).toBe(1.3);
+    expect(model.getDisplayTraceSamples().at(-1)?.value).toBe(1.3);
+    expect(model.scoreProperty.value).toBeLessThan(100);
+  });
+
+  it("abandons an unscorable run when its source becomes unavailable", () => {
+    const available = new BooleanProperty(true);
+    const position = new NumberProperty(1);
+    const sensorSource: TPositionSource = {
+      sourceType: PositionSourceType.MOTION_SENSOR,
+      positionProperty: position,
+      isAvailableProperty: available,
+      startSampling: () => undefined,
+      stopSampling: () => undefined,
+      step: () => undefined,
+      reset: () => undefined,
+      dispose: () => {
+        position.dispose();
+        available.dispose();
+      },
+    };
+    const sensorModel = new MotionMatchModel({ sourceType: PositionSourceType.MOTION_SENSOR, source: sensorSource });
+    sensorModel.startRun();
+    advance(sensorModel, COUNTDOWN_S + 1);
+    available.value = false;
+    expect(sensorModel.runStateProperty.value).toBe(RunState.READY);
+    expect(sensorModel.scoreProperty.value).toBeNull();
+    expect(sensorModel.getTraceSamples()).toHaveLength(0);
+    sensorModel.dispose();
   });
 
   it("scores a run stopped early on what was actually recorded", () => {

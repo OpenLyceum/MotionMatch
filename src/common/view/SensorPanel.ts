@@ -87,18 +87,27 @@ export class SensorPanel extends MotionMatchPanel {
       },
     );
 
-    const statusColorProperty = new DerivedProperty([source.connectionStateProperty], (state) => {
-      switch (state) {
-        case ConnectionState.CONNECTING:
-          return MotionMatchColors.statusConnectingColorProperty.value;
-        case ConnectionState.CONNECTED:
-          return MotionMatchColors.statusConnectedColorProperty.value;
-        case ConnectionState.ERROR:
-          return MotionMatchColors.statusErrorColorProperty.value;
-        default:
-          return MotionMatchColors.statusDisconnectedColorProperty.value;
-      }
-    });
+    const statusColorProperty = new DerivedProperty(
+      [
+        source.connectionStateProperty,
+        MotionMatchColors.statusDisconnectedColorProperty,
+        MotionMatchColors.statusConnectingColorProperty,
+        MotionMatchColors.statusConnectedColorProperty,
+        MotionMatchColors.statusErrorColorProperty,
+      ],
+      (state, disconnected, connecting, connected, errored) => {
+        switch (state) {
+          case ConnectionState.CONNECTING:
+            return connecting;
+          case ConnectionState.CONNECTED:
+            return connected;
+          case ConnectionState.ERROR:
+            return errored;
+          default:
+            return disconnected;
+        }
+      },
+    );
 
     const statusDot = new Circle(5, { fill: statusColorProperty });
     const statusRow = new HBox({
@@ -210,8 +219,11 @@ export class SensorPanel extends MotionMatchPanel {
       },
     );
 
+    const formattedPositionProperty = new DerivedProperty([source.sensorPositionProperty], (metres) =>
+      StringUtils.toFixedLTR(metres, 3),
+    );
     const rawPositionProperty = new PatternStringProperty(sensorStrings.rawPositionPatternStringProperty, {
-      position: new DerivedProperty([source.sensorPositionProperty], (metres) => StringUtils.toFixedLTR(metres, 3)),
+      position: formattedPositionProperty,
     });
     const diagnosticsText = new Text(rawPositionProperty, {
       font: MESSAGE_FONT,
@@ -272,6 +284,7 @@ export class SensorPanel extends MotionMatchPanel {
         errorTextProperty,
         hasErrorProperty,
         rawPositionProperty,
+        formattedPositionProperty,
       ]) {
         property.dispose();
       }

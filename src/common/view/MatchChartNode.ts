@@ -245,7 +245,9 @@ export class MatchChartNode extends Node {
       const samples = allSamples.filter((_sample, index) => index % 20 === 0);
       for (const [index, sample] of samples.entries()) {
         const point = this.chartTransform.modelToViewPosition(new Vector2(sample.time, sample.value));
-        const color = `hsl(${(196 + index * 7) % 360}, 78%, 52%)`;
+        const color =
+          MotionMatchColors.graphPointColorProperties[index % MotionMatchColors.graphPointColorProperties.length] ??
+          MotionMatchColors.traceColorProperty;
         graphPoints.addChild(
           new Circle(3.5, { center: point, fill: color, stroke: MotionMatchColors.chartBackgroundColorProperty }),
         );
