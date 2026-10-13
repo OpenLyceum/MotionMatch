@@ -75,7 +75,7 @@ readings — useful when bringing hardware up.
 | Biome | ^2.5 | Lint + format |
 | Vitest | ^5 | Unit tests (`happy-dom`) |
 | Playwright | ^1.63 | Fuzz smoke test |
-| vite-plugin-pwa | ^1 | Installable / offline |
+| vite-plugin-pwa | ^2 | Installable / offline |
 
 Hardware: **PASCO Wireless Motion Sensor PS-3219** (0.15–4 m, 1 mm resolution,
 Bluetooth 5.2). Web Bluetooth requires a Chromium-based browser and a secure
