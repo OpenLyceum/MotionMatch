@@ -54,17 +54,7 @@ A11y strings live under the `a11y` key of each locale JSON, read through `String
 - Keyboard Shortcuts dialog: `src/common/view/MotionMatchKeyboardHelpContent.ts`
 - Keyboard-draggable objects: `src/common/view/PlayAreaNode.ts`
 
-## Compliance carve-outs
-
-### `package.json` overrides
-
-Inherited from the template; rationale unchanged (`lodash`, `three`,
-`brace-expansion` pinned for advisories SceneryStack has not yet re-pinned).
-Dependabot ignores those three names.
-
 ## Testing
-
-Vitest on `happy-dom` with the template `tests/setup.ts`; tests live only under `tests/`.
 
 | Path | Covers |
 |---|---|
@@ -102,16 +92,9 @@ default `long` is what it powers up on, so the default path sends no range
 command at all. The command was recovered from SPARKvue's WebAssembly build, not
 captured off the wire — verify `short` on hardware before making it the default.
 
-## Commands
-
-```bash
-npm run lint && npm run check && npm run build && npm test
-```
-
-`npm run test:fuzz:quick` after any change to the sensor path — it is the only
-check that constructs both screens in a real browser.
-
 ## Development notes
+
+`npm run test:fuzz:quick` is the check that constructs both screens in a real browser. Run it after a change to the sensor path.
 
 ### Things that will bite
 
