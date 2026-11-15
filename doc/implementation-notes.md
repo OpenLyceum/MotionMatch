@@ -276,7 +276,7 @@ the Preferences slider that moves it — is bounded by
 `SENSOR_SAMPLE_RATE_RANGE_HZ` = 5–50 Hz for the same reason: at 50 Hz the echo
 ceiling is 3.44 m, still comfortably past the far end of the track, and the
 floor is deliberately below the model's own 20 Hz so a link that cannot keep up
-is visible in the trace rather than merely suspected. `SENSOR_MINIMUM_RANGE_M` = 0.15 is the other end of the same
+is visible in the trace rather than merely suspected. The sensor's 0.15 m minimum range is the other end of the same
 mechanism: about 0.85 ms of transducer dead time after the outgoing burst.
 (The datasheet's `Minimum="0.015"` is off by a factor of ten; the manual, the
 knowledge base and the dead time all agree on 0.15 m.)

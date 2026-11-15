@@ -18,7 +18,4 @@ export const GraphMode = {
 
 export type GraphModeValue = (typeof GraphMode)[keyof typeof GraphMode];
 
-/** Ordered for the radio-button group. */
-export const GRAPH_MODES: readonly GraphModeValue[] = [GraphMode.POSITION, GraphMode.VELOCITY];
-
 MotionMatchNamespace.register("GraphMode", GraphMode);

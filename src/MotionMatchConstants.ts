@@ -63,7 +63,7 @@ export const COUNTDOWN_S = 3;
  * fixed clock at this rate, so a run has the same number of points and the same
  * spacing whether it came from the pointer or from the sensor.
  */
-export const SAMPLE_RATE_HZ = 20;
+const SAMPLE_RATE_HZ = 20;
 
 /** Derived from {@link SAMPLE_RATE_HZ}; the model's fixed timestep during a run. */
 export const SAMPLE_PERIOD_S = 1 / SAMPLE_RATE_HZ;
@@ -85,9 +85,6 @@ export const POSITION_RANGE_M = new Range(0, 2);
 
 /** Velocity axis. The fastest rescaled profile peaks near 0.63 m/s. */
 export const VELOCITY_RANGE_MPS = new Range(-0.75, 0.75);
-
-/** Closest distance the PASCO Wireless Motion Sensor (PS-3219) can resolve, in metres. */
-export const SENSOR_MINIMUM_RANGE_M = 0.15;
 
 /** Tick spacing on the two axes. */
 export const TIME_TICK_SPACING_S = 1;
@@ -144,9 +141,6 @@ export const SENSOR_SAMPLE_RATE_RANGE_HZ = new Range(5, 50);
  * single dropped BLE round trip is normal; ten in a row is not.
  */
 export const MAXIMUM_CONSECUTIVE_FAILURES = 10;
-
-/** Name prefix used to filter the Web Bluetooth device picker. */
-export const MOTION_SENSOR_NAME_FILTER = "Motion";
 
 /** Human-readable name of the position derived from the raw echo-time sample. */
 export const POSITION_MEASUREMENT = "Position";

@@ -35,7 +35,7 @@ import { SensorPanel } from "./SensorPanel.js";
 
 const LEGEND_FONT = new PhetFont(12);
 
-export type MotionMatchScreenViewSelfOptions = {
+type MotionMatchScreenViewSelfOptions = {
   readonly a11y: ScreenA11yStrings;
   /** Present on the Simulation screen only; makes the walker draggable. */
   readonly writablePositionProperty?: NumberProperty;

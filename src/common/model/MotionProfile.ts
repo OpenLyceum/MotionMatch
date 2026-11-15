@@ -126,7 +126,7 @@ export function piecewiseLinearShape(knots: readonly Knot[]): ProfileShape {
  * Corners in the nine profiles are at least 1.5 s apart and the blend is 0.4 s
  * wide, so at most one blend is ever active at a given time.
  */
-export function smoothedVelocity(shape: ProfileShape, time: number): number {
+function smoothedVelocity(shape: ProfileShape, time: number): number {
   const halfWidth = CORNER_SMOOTHING_S / 2;
 
   for (const corner of shape.corners) {
