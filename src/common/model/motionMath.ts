@@ -16,6 +16,7 @@ export type Sample = {
  * window. Returns 0 when there are fewer than two points or the times are
  * degenerate, which is the right answer for a stationary or empty window and
  * avoids a division by zero at the ends of a trace.
+ * @internal Exported for unit tests; not part of the application API.
  */
 export function estimateDerivative(points: readonly Sample[]): number {
   const n = points.length;

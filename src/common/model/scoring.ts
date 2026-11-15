@@ -16,7 +16,10 @@
 
 import type { Sample } from "./motionMath.js";
 
-/** A score of 100 means every sample landed inside the band. */
+/**
+ * A score of 100 means every sample landed inside the band.
+ * @internal Exported for unit tests; not part of the application API.
+ */
 export const PERFECT_SCORE = 100;
 
 /**

@@ -45,6 +45,7 @@ export type Knot = {
 /**
  * Smooth Hermite interpolation on [0, 1]: 0 at 0, 1 at 1, zero slope at both
  * ends. Values outside [0, 1] are clamped.
+ * @internal Exported for unit tests; not part of the application API.
  */
 export function smoothstep(t: number): number {
   const x = t <= 0 ? 0 : t >= 1 ? 1 : t;
