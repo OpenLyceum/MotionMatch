@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { TMotionSensorDevice } from "../../../src/common/model/hardware/MotionSensorDevice.js";
 import { MotionSensorSource } from "../../../src/common/model/MotionSensorSource.js";
-import type { TMotionSensorDevice } from "../../../src/sensor/model/MotionSensorDevice.js";
 
 describe("MotionSensorSource streaming", () => {
   afterEach(() => {
