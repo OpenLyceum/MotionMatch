@@ -7,12 +7,12 @@
  * scoring — which is the whole point of the two-screen pairing.
  */
 
+import { MotionRange, type MotionRangeValue } from "../../common/model/hardware/PascoMotionProtocol.js";
 import { MotionMatchModel } from "../../common/model/MotionMatchModel.js";
 import { MotionSensorSource } from "../../common/model/MotionSensorSource.js";
 import { PositionSourceType } from "../../common/model/PositionSource.js";
 import type { MotionMatchPreferencesModel } from "../../preferences/MotionMatchPreferencesModel.js";
 import motionMatchQueryParameters from "../../preferences/motionMatchQueryParameters.js";
-import { MotionRange, type MotionRangeValue } from "./PascoMotionProtocol.js";
 
 const RANGE_BY_NAME: Record<string, MotionRangeValue | undefined> = {
   short: MotionRange.SHORT,

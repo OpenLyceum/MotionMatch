@@ -30,11 +30,11 @@ import {
   POSITION_RANGE_M,
 } from "../../MotionMatchConstants.js";
 import MotionMatchNamespace from "../../MotionMatchNamespace.js";
-import { BluetoothMotionSensor } from "../../sensor/model/BluetoothMotionSensor.js";
-import { DeviceSelectionCancelled, type TMotionSensorDevice } from "../../sensor/model/MotionSensorDevice.js";
-import { echoTimeToMetres, type MotionRangeValue } from "../../sensor/model/PascoMotionProtocol.js";
-import { UsbMotionSensor } from "../../sensor/model/UsbMotionSensor.js";
 import { ConnectionState, type ConnectionStateValue } from "./ConnectionState.js";
+import { BluetoothMotionSensor } from "./hardware/BluetoothMotionSensor.js";
+import { DeviceSelectionCancelled, type TMotionSensorDevice } from "./hardware/MotionSensorDevice.js";
+import { echoTimeToMetres, type MotionRangeValue } from "./hardware/PascoMotionProtocol.js";
+import { UsbMotionSensor } from "./hardware/UsbMotionSensor.js";
 import { PositionSourceType, type PositionSourceTypeValue, type TPositionSource } from "./PositionSource.js";
 
 /** The two ways a PS-3219 can be reached from a browser. */
