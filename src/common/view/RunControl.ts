@@ -1,3 +1,4 @@
+import { RUN_CONTROL_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * RunControl.ts
  *
@@ -24,8 +25,8 @@ import type { MotionMatchModel } from "../model/MotionMatchModel.js";
 import { PositionSourceType } from "../model/PositionSource.js";
 import { RunState } from "../model/RunState.js";
 
-const SCORE_FONT = new PhetFont({ size: 26, weight: "bold" });
-const MESSAGE_FONT = new PhetFont(14);
+const SCORE_FONT = new PhetFont({ size: RUN_CONTROL_SETTINGS.SCORE_FONT_SIZE, weight: "bold" });
+const MESSAGE_FONT = new PhetFont(RUN_CONTROL_SETTINGS.MESSAGE_FONT_SIZE);
 
 export class RunControl extends MotionMatchPanel {
   /** Exposed so the ScreenView can order them in the PDOM. */
@@ -55,7 +56,7 @@ export class RunControl extends MotionMatchPanel {
     );
     const playPauseButton = new PlayPauseButton(isPlayingProperty, {
       ...FLAT_PANEL_PUSH_BUTTON_OPTIONS,
-      radius: 22,
+      radius: RUN_CONTROL_SETTINGS.PLAY_PAUSE_BUTTON_RADIUS,
       startPlayingAccessibleName: a11y.controls.startButtonStringProperty,
       endPlayingAccessibleName: a11y.controls.stopButtonStringProperty,
       visibleProperty: showPlayPauseProperty,
@@ -81,7 +82,7 @@ export class RunControl extends MotionMatchPanel {
     const tryAgainButton = new RectangularPushButton({
       ...FLAT_PANEL_PUSH_BUTTON_OPTIONS,
       content: new Text(runStrings.tryAgainStringProperty, {
-        font: new PhetFont(15),
+        font: new PhetFont(RUN_CONTROL_SETTINGS.TRY_AGAIN_BUTTON_FONT_SIZE),
         fill: LIGHT_SURFACE_TEXT_FILL,
       }),
       listener: () => model.abandonRun(),
@@ -99,7 +100,7 @@ export class RunControl extends MotionMatchPanel {
       font: SCORE_FONT,
       fill: MotionMatchColors.accentColorProperty,
       visibleProperty: isCountingDownProperty,
-      maxWidth: CONTROL_PANEL_WIDTH - 40,
+      maxWidth: CONTROL_PANEL_WIDTH - RUN_CONTROL_SETTINGS.COUNTDOWN_TEXT_MAX_WIDTH_OFFSET,
     });
 
     // Only the sensor screen can be unable to start, and only for one reason:
@@ -113,13 +114,13 @@ export class RunControl extends MotionMatchPanel {
       font: MESSAGE_FONT,
       fill: MotionMatchColors.textColorProperty,
       visibleProperty: needsSensorProperty,
-      maxWidth: CONTROL_PANEL_WIDTH - 40,
+      maxWidth: CONTROL_PANEL_WIDTH - RUN_CONTROL_SETTINGS.CONNECT_FIRST_TEXT_MAX_WIDTH_OFFSET,
     });
 
     super(
       new VBox({
         align: "center",
-        spacing: 10,
+        spacing: RUN_CONTROL_SETTINGS.CONSTRUCTOR_SPACING,
         preferredWidth: CONTROL_PANEL_WIDTH - 24,
         stretch: false,
         children: [playPauseButton, tryAgainButton, countdownText, connectFirstText],

@@ -1,3 +1,4 @@
+import { SCORING_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * scoring.ts
  *
@@ -20,7 +21,7 @@ import type { Sample } from "./motionMath.js";
  * A score of 100 means every sample landed inside the band.
  * @internal Exported for unit tests; not part of the application API.
  */
-export const PERFECT_SCORE = 100;
+export const PERFECT_SCORE: number = SCORING_SETTINGS.PERFECT_SCORE;
 
 /**
  * Percentage of `samples` lying within `tolerance` of `target`, rounded to a

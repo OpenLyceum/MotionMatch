@@ -12,6 +12,7 @@ import { Shape } from "scenerystack/kite";
 import { Circle, Node, Path, Rectangle, type TColor } from "scenerystack/scenery";
 import { ScreenIcon } from "scenerystack/sim";
 import MotionMatchColors from "../MotionMatchColors.js";
+import { MOTION_MATCH_SCREEN_ICONS_SETTINGS } from "../MotionMatchConstants.js";
 
 const W = 548;
 const H = 373;
@@ -23,7 +24,7 @@ function background(): Rectangle {
 /** The arch of profile H, scaled to fill most of the icon canvas. */
 function archPath(stroke: TColor, lineDash: number[]): Path {
   const shape = new Shape();
-  const steps = 48;
+  const steps: number = MOTION_MATCH_SCREEN_ICONS_SETTINGS.STEPS;
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
     const x = 60 + t * (W - 120);
@@ -35,7 +36,12 @@ function archPath(stroke: TColor, lineDash: number[]): Path {
       shape.lineTo(x, y);
     }
   }
-  return new Path(shape, { stroke: stroke, lineWidth: 14, lineCap: "round", lineDash: lineDash });
+  return new Path(shape, {
+    stroke: stroke,
+    lineWidth: MOTION_MATCH_SCREEN_ICONS_SETTINGS.ARCH_PATH_LINE_WIDTH,
+    lineCap: "round",
+    lineDash: lineDash,
+  });
 }
 
 function iconFrom(content: Node): ScreenIcon {
@@ -53,11 +59,21 @@ export function createSimulationIcon(): ScreenIcon {
         background(),
         archPath(MotionMatchColors.targetCurveColorProperty, [24, 16]),
         // A pointer-drawn trace: close to the target, not on it.
-        new Path(new Shape().moveTo(60, H - 90).quadraticCurveTo(W / 2, 40, W - 60, H - 60), {
-          stroke: MotionMatchColors.traceColorProperty,
-          lineWidth: 14,
-          lineCap: "round",
-        }),
+        new Path(
+          new Shape()
+            .moveTo(MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_SIMULATION_ICON_X, H - 90)
+            .quadraticCurveTo(
+              W / 2,
+              MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_SIMULATION_ICON_CONTROL_Y,
+              W - 60,
+              H - 60,
+            ),
+          {
+            stroke: MotionMatchColors.traceColorProperty,
+            lineWidth: MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_SIMULATION_ICON_LINE_WIDTH,
+            lineCap: "round",
+          },
+        ),
       ],
     }),
   );
@@ -72,7 +88,7 @@ export function createMotionSensorIcon(): ScreenIcon {
         // The sensor at the origin, with its ultrasound cone opening along the track.
         new Path(
           new Shape()
-            .moveTo(70, H - 60)
+            .moveTo(MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_MOTION_SENSOR_ICON_X, H - 60)
             .lineTo(W - 40, H - 150)
             .lineTo(W - 40, H - 20)
             .close(),
@@ -80,8 +96,20 @@ export function createMotionSensorIcon(): ScreenIcon {
             fill: MotionMatchColors.sensorBeamColorProperty,
           },
         ),
-        new Rectangle(40, H - 96, 46, 68, 8, 8, { fill: MotionMatchColors.sensorBodyColorProperty }),
-        new Circle(14, { fill: MotionMatchColors.backgroundColorProperty, centerX: 63, centerY: H - 62 }),
+        new Rectangle(
+          MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_MOTION_SENSOR_ICON_X_SEGMENT_2,
+          H - 96,
+          MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_MOTION_SENSOR_ICON_WIDTH,
+          MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_MOTION_SENSOR_ICON_HEIGHT,
+          MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_MOTION_SENSOR_ICON_CORNER_X,
+          MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_MOTION_SENSOR_ICON_CORNER_Y,
+          { fill: MotionMatchColors.sensorBodyColorProperty },
+        ),
+        new Circle(MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_MOTION_SENSOR_ICON_RADIUS, {
+          fill: MotionMatchColors.backgroundColorProperty,
+          centerX: MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_MOTION_SENSOR_ICON_CENTER_X,
+          centerY: H - MOTION_MATCH_SCREEN_ICONS_SETTINGS.CREATE_MOTION_SENSOR_ICON_CENTER_Y_OFFSET,
+        }),
       ],
     }),
   );

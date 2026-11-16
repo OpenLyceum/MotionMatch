@@ -1,3 +1,4 @@
+import { PROFILE_CONTROL_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * ProfileControl.ts
  *
@@ -24,7 +25,7 @@ import type { MotionProfile } from "../model/MotionProfile.js";
 import { PROFILES } from "../model/profiles.js";
 import { createProfileSparkline } from "./profileSparkline.js";
 
-const LABEL_FONT = new PhetFont(13);
+const LABEL_FONT = new PhetFont(PROFILE_CONTROL_SETTINGS.LABEL_FONT_SIZE);
 
 export type ProfileControlOptions = {
   readonly profileProperty: Property<MotionProfile>;
@@ -72,10 +73,14 @@ export class ProfileControl extends MotionMatchPanel {
           value: profile,
           createNode: () =>
             new HBox({
-              spacing: 10,
+              spacing: PROFILE_CONTROL_SETTINGS.COMBO_BOX_SPACING,
               children: [
                 createProfileSparkline(profile),
-                new Text(visibleLabelProperty, { font: LABEL_FONT, fill: LIGHT_SURFACE_TEXT_FILL, maxWidth: 240 }),
+                new Text(visibleLabelProperty, {
+                  font: LABEL_FONT,
+                  fill: LIGHT_SURFACE_TEXT_FILL,
+                  maxWidth: PROFILE_CONTROL_SETTINGS.COMBO_BOX_MAX_WIDTH,
+                }),
               ],
             }),
         };
@@ -91,12 +96,12 @@ export class ProfileControl extends MotionMatchPanel {
     const positionLabel = new Text(modeStrings.positionStringProperty, {
       font: LABEL_FONT,
       fill: MotionMatchColors.textColorProperty,
-      maxWidth: 150,
+      maxWidth: PROFILE_CONTROL_SETTINGS.POSITION_LABEL_MAX_WIDTH,
     });
     const velocityLabel = new Text(modeStrings.velocityStringProperty, {
       font: LABEL_FONT,
       fill: MotionMatchColors.textColorProperty,
-      maxWidth: 150,
+      maxWidth: PROFILE_CONTROL_SETTINGS.VELOCITY_LABEL_MAX_WIDTH,
     });
     const graphModeToggle = new ABSwitch(
       providedOptions.graphModeProperty,
@@ -105,22 +110,22 @@ export class ProfileControl extends MotionMatchPanel {
       GraphMode.VELOCITY,
       velocityLabel,
       {
-        spacing: 10,
+        spacing: PROFILE_CONTROL_SETTINGS.GRAPH_MODE_TOGGLE_SPACING,
         accessibleHelpText: providedOptions.graphModeAccessibleName,
         tandem: Tandem.OPT_OUT,
       },
     );
 
     const title = new Text(strings.getChooseCurveStringProperty(), {
-      font: new PhetFont({ size: 14, weight: "bold" }),
+      font: new PhetFont({ size: PROFILE_CONTROL_SETTINGS.TITLE_FONT_SIZE, weight: "bold" }),
       fill: MotionMatchColors.textColorProperty,
-      maxWidth: CONTROL_PANEL_WIDTH - 40,
+      maxWidth: CONTROL_PANEL_WIDTH - PROFILE_CONTROL_SETTINGS.TITLE_MAX_WIDTH_OFFSET,
     });
 
     super(
       new VBox({
         align: "left",
-        spacing: 10,
+        spacing: PROFILE_CONTROL_SETTINGS.CONSTRUCTOR_SPACING,
         preferredWidth: CONTROL_PANEL_WIDTH - 24,
         stretch: true,
         children: [title, comboBox, graphModeToggle],

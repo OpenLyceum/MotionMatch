@@ -1,3 +1,4 @@
+import { TRACE_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * Trace.ts
  *
@@ -15,7 +16,7 @@ import { DERIVATIVE_WINDOW_SAMPLES } from "../../MotionMatchConstants.js";
 import { differentiate, type Sample } from "./motionMath.js";
 
 /** Five 20 Hz samples span the requested 200 ms smoothing interval. */
-const SMOOTHING_WINDOW_SAMPLES = 5;
+const SMOOTHING_WINDOW_SAMPLES: number = TRACE_SETTINGS.SMOOTHING_WINDOW_SAMPLES;
 
 export class Trace {
   /** Position samples, in metres, in recording order. */

@@ -1,3 +1,4 @@
+import { PROFILE_SPARKLINE_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * profileSparkline.ts
  *
@@ -20,7 +21,7 @@ import { POSITION_RANGE_M, RUN_DURATION_S, SPARKLINE_HEIGHT, SPARKLINE_WIDTH } f
 import type { MotionProfile } from "../model/MotionProfile.js";
 
 /** Enough points that a sinusoid reads as a sinusoid at thumbnail size. */
-const SAMPLE_COUNT = 40;
+const SAMPLE_COUNT: number = PROFILE_SPARKLINE_SETTINGS.SAMPLE_COUNT;
 
 export function createProfileSparkline(profile: MotionProfile): Path {
   const shape = new Shape();
@@ -40,7 +41,7 @@ export function createProfileSparkline(profile: MotionProfile): Path {
 
   return new Path(shape, {
     stroke: MotionMatchColors.controlSurfaceTextColorProperty,
-    lineWidth: 1.5,
+    lineWidth: PROFILE_SPARKLINE_SETTINGS.CREATE_PROFILE_SPARKLINE_LINE_WIDTH,
     lineCap: "round",
     lineJoin: "round",
   });

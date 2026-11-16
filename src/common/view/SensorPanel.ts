@@ -1,3 +1,4 @@
+import { SENSOR_PANEL_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * SensorPanel.ts
  *
@@ -34,8 +35,8 @@ import { ConnectionState } from "../model/ConnectionState.js";
 import { type MotionSensorSource, SensorTransport, type SensorTransportValue } from "../model/MotionSensorSource.js";
 import { BluetoothStatus, getBluetoothStatus, isWebUsbAvailable } from "../model/transportSupport.js";
 
-const LABEL_FONT = new PhetFont(13);
-const MESSAGE_FONT = new PhetFont(12);
+const LABEL_FONT = new PhetFont(SENSOR_PANEL_SETTINGS.LABEL_FONT_SIZE);
+const MESSAGE_FONT = new PhetFont(SENSOR_PANEL_SETTINGS.MESSAGE_FONT_SIZE);
 
 export type SensorPanelOptions = {
   readonly source: MotionSensorSource;
@@ -109,15 +110,15 @@ export class SensorPanel extends MotionMatchPanel {
       },
     );
 
-    const statusDot = new Circle(5, { fill: statusColorProperty });
+    const statusDot = new Circle(SENSOR_PANEL_SETTINGS.STATUS_DOT_RADIUS, { fill: statusColorProperty });
     const statusRow = new HBox({
-      spacing: 8,
+      spacing: SENSOR_PANEL_SETTINGS.STATUS_ROW_SPACING,
       children: [
         statusDot,
         new Text(statusTextProperty, {
           font: LABEL_FONT,
           fill: MotionMatchColors.textColorProperty,
-          maxWidth: CONTROL_PANEL_WIDTH - 60,
+          maxWidth: CONTROL_PANEL_WIDTH - SENSOR_PANEL_SETTINGS.STATUS_ROW_MAX_WIDTH_OFFSET,
         }),
       ],
     });
@@ -187,7 +188,7 @@ export class SensorPanel extends MotionMatchPanel {
       font: MESSAGE_FONT,
       fill: MotionMatchColors.textColorProperty,
       visibleProperty: hasDeviceNameProperty,
-      maxWidth: CONTROL_PANEL_WIDTH - 40,
+      maxWidth: CONTROL_PANEL_WIDTH - SENSOR_PANEL_SETTINGS.DEVICE_NAME_TEXT_MAX_WIDTH_OFFSET,
     });
 
     // The library's own error text is English and often a raw DOMException
@@ -202,7 +203,7 @@ export class SensorPanel extends MotionMatchPanel {
       font: MESSAGE_FONT,
       fill: MotionMatchColors.statusErrorColorProperty,
       visibleProperty: hasErrorProperty,
-      maxWidth: CONTROL_PANEL_WIDTH - 40,
+      maxWidth: CONTROL_PANEL_WIDTH - SENSOR_PANEL_SETTINGS.ERROR_TEXT_MAX_WIDTH_OFFSET,
     });
 
     // Only when neither transport is reachable: with one of them working there
@@ -215,7 +216,7 @@ export class SensorPanel extends MotionMatchPanel {
         font: MESSAGE_FONT,
         fill: MotionMatchColors.textColorProperty,
         visible: !(bluetoothAvailable || usbAvailable),
-        maxWidth: CONTROL_PANEL_WIDTH - 40,
+        maxWidth: CONTROL_PANEL_WIDTH - SENSOR_PANEL_SETTINGS.UNAVAILABLE_TEXT_MAX_WIDTH_OFFSET,
       },
     );
 
@@ -229,7 +230,7 @@ export class SensorPanel extends MotionMatchPanel {
       font: MESSAGE_FONT,
       fill: MotionMatchColors.textColorProperty,
       visibleProperty: providedOptions.showDiagnosticsProperty,
-      maxWidth: CONTROL_PANEL_WIDTH - 40,
+      maxWidth: CONTROL_PANEL_WIDTH - SENSOR_PANEL_SETTINGS.DIAGNOSTICS_TEXT_MAX_WIDTH_OFFSET,
     });
 
     // Verbatim device output, for telling a real zero reading (nothing in front
@@ -238,19 +239,19 @@ export class SensorPanel extends MotionMatchPanel {
       font: MESSAGE_FONT,
       fill: MotionMatchColors.textColorProperty,
       visibleProperty: providedOptions.showDiagnosticsProperty,
-      maxWidth: CONTROL_PANEL_WIDTH - 40,
+      maxWidth: CONTROL_PANEL_WIDTH - SENSOR_PANEL_SETTINGS.MEASUREMENT_LIST_TEXT_MAX_WIDTH_OFFSET,
     });
     const rawReadingText = new Text(source.diagnosticsProperty, {
       font: MESSAGE_FONT,
       fill: MotionMatchColors.textColorProperty,
       visibleProperty: providedOptions.showDiagnosticsProperty,
-      maxWidth: CONTROL_PANEL_WIDTH - 40,
+      maxWidth: CONTROL_PANEL_WIDTH - SENSOR_PANEL_SETTINGS.RAW_READING_TEXT_MAX_WIDTH_OFFSET,
     });
 
     super(
       new VBox({
         align: "left",
-        spacing: 8,
+        spacing: SENSOR_PANEL_SETTINGS.CONSTRUCTOR_SPACING,
         preferredWidth: CONTROL_PANEL_WIDTH - 24,
         stretch: true,
         children: [

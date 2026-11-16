@@ -1,3 +1,4 @@
+import { MOTION_MATCH_PREFERENCES_NODE_SETTINGS } from "../MotionMatchConstants.js";
 /**
  * MotionMatchPreferencesNode.ts
  *
@@ -21,9 +22,9 @@ import { POSITION_TOLERANCE_RANGE_M, SENSOR_SAMPLE_RATE_RANGE_HZ } from "../Moti
 import MotionMatchNamespace from "../MotionMatchNamespace.js";
 import type { MotionMatchPreferencesModel } from "./MotionMatchPreferencesModel.js";
 
-const LABEL_FONT = new PhetFont(14);
-const DESCRIPTION_FONT = new PhetFont(12);
-const CONTENT_WIDTH = 440;
+const LABEL_FONT = new PhetFont(MOTION_MATCH_PREFERENCES_NODE_SETTINGS.LABEL_FONT_SIZE);
+const DESCRIPTION_FONT = new PhetFont(MOTION_MATCH_PREFERENCES_NODE_SETTINGS.DESCRIPTION_FONT_SIZE);
+const CONTENT_WIDTH: number = MOTION_MATCH_PREFERENCES_NODE_SETTINGS.CONTENT_WIDTH;
 
 export class MotionMatchPreferencesNode extends Node {
   public constructor(preferences: MotionMatchPreferencesModel, tandem?: Tandem) {
@@ -34,9 +35,12 @@ export class MotionMatchPreferencesNode extends Node {
       preferences.positionToleranceProperty,
       POSITION_TOLERANCE_RANGE_M,
       {
-        delta: 0.05,
+        delta: MOTION_MATCH_PREFERENCES_NODE_SETTINGS.TOLERANCE_CONTROL_DELTA,
         titleNodeOptions: { font: LABEL_FONT, fill: MotionMatchColors.controlSurfaceTextColorProperty },
-        numberDisplayOptions: { decimalPlaces: 2, textOptions: { font: LABEL_FONT } },
+        numberDisplayOptions: {
+          decimalPlaces: MOTION_MATCH_PREFERENCES_NODE_SETTINGS.TOLERANCE_CONTROL_DECIMAL_PLACES,
+          textOptions: { font: LABEL_FONT },
+        },
         sliderOptions: { constrainValue: (value: number) => Math.round(value * 20) / 20 },
         ...(tandem ? { tandem: tandem.createTandem("toleranceControl") } : {}),
       },
@@ -74,7 +78,7 @@ export class MotionMatchPreferencesNode extends Node {
       new Text(strings.showDiagnosticsStringProperty, {
         font: LABEL_FONT,
         fill: MotionMatchColors.controlSurfaceTextColorProperty,
-        maxWidth: CONTENT_WIDTH - 40,
+        maxWidth: CONTENT_WIDTH - MOTION_MATCH_PREFERENCES_NODE_SETTINGS.DIAGNOSTICS_CHECKBOX_MAX_WIDTH_OFFSET,
       }),
       {
         accessibleName: strings.showDiagnosticsStringProperty,
@@ -87,7 +91,7 @@ export class MotionMatchPreferencesNode extends Node {
       new Text(strings.showMotionDescriptionsStringProperty, {
         font: LABEL_FONT,
         fill: MotionMatchColors.controlSurfaceTextColorProperty,
-        maxWidth: CONTENT_WIDTH - 40,
+        maxWidth: CONTENT_WIDTH - MOTION_MATCH_PREFERENCES_NODE_SETTINGS.MOTION_DESCRIPTIONS_CHECKBOX_MAX_WIDTH_OFFSET,
       }),
       {
         accessibleName: strings.showMotionDescriptionsStringProperty,
@@ -99,7 +103,7 @@ export class MotionMatchPreferencesNode extends Node {
       children: [
         new VBox({
           align: "left",
-          spacing: 12,
+          spacing: MOTION_MATCH_PREFERENCES_NODE_SETTINGS.CONSTRUCTOR_SPACING,
           children: [
             toleranceControl,
             toleranceDescription,

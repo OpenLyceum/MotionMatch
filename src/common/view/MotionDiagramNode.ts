@@ -1,3 +1,4 @@
+import { MOTION_DIAGRAM_NODE_SETTINGS } from "../../MotionMatchConstants.js";
 /** Equal-time position dots that make changes in speed visible spatially. */
 
 import type { TReadOnlyProperty } from "scenerystack/axon";
@@ -9,11 +10,11 @@ import { RUN_DURATION_S, SAMPLE_PERIOD_S } from "../../MotionMatchConstants.js";
 import type { MotionMatchModel } from "../model/MotionMatchModel.js";
 import { LinearTransform } from "./LinearTransform.js";
 
-const HEIGHT = 58;
-const EDGE_INSET = 26;
+const HEIGHT: number = MOTION_DIAGRAM_NODE_SETTINGS.HEIGHT;
+const EDGE_INSET: number = MOTION_DIAGRAM_NODE_SETTINGS.EDGE_INSET;
 const DOT_PERIOD_S = 1;
 const SAMPLES_PER_DOT = Math.round(DOT_PERIOD_S / SAMPLE_PERIOD_S);
-const VECTOR_Y_OFFSET = 9;
+const VECTOR_Y_OFFSET: number = MOTION_DIAGRAM_NODE_SETTINGS.VECTOR_Y_OFFSET;
 
 export class MotionDiagramNode extends Node {
   private readonly disposeMotionDiagramNode: () => void;
@@ -32,12 +33,20 @@ export class MotionDiagramNode extends Node {
     const baselineY = 39;
 
     this.children = [
-      new Rectangle(0, 0, width, HEIGHT, 6, 6, { fill: MotionMatchColors.trackColorProperty }),
+      new Rectangle(
+        0,
+        0,
+        width,
+        HEIGHT,
+        MOTION_DIAGRAM_NODE_SETTINGS.CHILDREN_CORNER_X,
+        MOTION_DIAGRAM_NODE_SETTINGS.CHILDREN_CORNER_Y,
+        { fill: MotionMatchColors.trackColorProperty },
+      ),
       new Text(StringManager.getInstance().getMotionDiagramStringProperty(), {
-        font: new PhetFont(11),
+        font: new PhetFont(MOTION_DIAGRAM_NODE_SETTINGS.CHILDREN_FONT_SIZE),
         fill: MotionMatchColors.textColorProperty,
-        left: 10,
-        top: 5,
+        left: MOTION_DIAGRAM_NODE_SETTINGS.CHILDREN_LEFT,
+        top: MOTION_DIAGRAM_NODE_SETTINGS.CHILDREN_TOP,
       }),
       new Line(EDGE_INSET, baselineY, width - EDGE_INSET, baselineY, {
         stroke: MotionMatchColors.trackMarkColorProperty,
@@ -73,7 +82,7 @@ export class MotionDiagramNode extends Node {
             MotionMatchColors.graphPointColorProperties[i % MotionMatchColors.graphPointColorProperties.length] ??
             MotionMatchColors.traceColorProperty;
           dots.addChild(
-            new Circle(4.5, {
+            new Circle(MOTION_DIAGRAM_NODE_SETTINGS.UPDATE_DOTS_RADIUS, {
               centerX: dotX,
               centerY: baselineY,
               fill: color,
@@ -94,9 +103,9 @@ export class MotionDiagramNode extends Node {
                 {
                   fill: color,
                   stroke: color,
-                  headWidth: 7,
-                  headHeight: 7,
-                  tailWidth: 2,
+                  headWidth: MOTION_DIAGRAM_NODE_SETTINGS.UPDATE_DOTS_HEAD_WIDTH,
+                  headHeight: MOTION_DIAGRAM_NODE_SETTINGS.UPDATE_DOTS_HEAD_HEIGHT,
+                  tailWidth: MOTION_DIAGRAM_NODE_SETTINGS.UPDATE_DOTS_TAIL_WIDTH,
                 },
               ),
             );

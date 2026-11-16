@@ -1,3 +1,4 @@
+import { MOTION_SENSOR_SOURCE_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * MotionSensorSource.ts
  *
@@ -50,7 +51,7 @@ export type SensorTransportValue = (typeof SensorTransport)[keyof typeof SensorT
  * instead. Long enough to cover a slow first sample at the lowest rate the
  * preference allows, short enough that a run of ten seconds still gets a trace.
  */
-const STREAM_SILENCE_TIMEOUT_MS = 1000;
+const STREAM_SILENCE_TIMEOUT_MS: number = MOTION_SENSOR_SOURCE_SETTINGS.STREAM_SILENCE_TIMEOUT_MS;
 
 export type MotionSensorSourceOptions = {
   /**

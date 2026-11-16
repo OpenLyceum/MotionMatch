@@ -1,3 +1,4 @@
+import { MOTION_MATCH_MODEL_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * MotionMatchModel.ts
  *
@@ -39,7 +40,7 @@ import { Trace } from "./Trace.js";
  * Clamping stops the accumulator from firing hundreds of catch-up samples and
  * recording a flat line for time the student was not actually there for.
  */
-const MAXIMUM_DT_S = 0.25;
+const MAXIMUM_DT_S: number = MOTION_MATCH_MODEL_SETTINGS.MAXIMUM_DT_S;
 
 /**
  * Samples in a complete run. Derived once so the run ends on a sample count
@@ -55,7 +56,7 @@ const TOTAL_COUNTDOWN_SAMPLES = Math.round(COUNTDOWN_S / SAMPLE_PERIOD_S);
  * 2.9999999999999996, which without this would hold the countdown for one extra
  * frame.
  */
-const TIME_EPSILON_S = 1e-9;
+const TIME_EPSILON_S: number = MOTION_MATCH_MODEL_SETTINGS.TIME_EPSILON_S;
 
 export type MotionMatchModelOptions = {
   /** Which source this screen is locked to. */

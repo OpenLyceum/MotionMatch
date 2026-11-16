@@ -1,3 +1,4 @@
+import { SCORE_CARD_NODE_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * ScoreCardNode.ts
  *
@@ -15,8 +16,8 @@ import type { MotionMatchModel } from "../model/MotionMatchModel.js";
 import { PositionSourceType } from "../model/PositionSource.js";
 import { RunState } from "../model/RunState.js";
 
-const SCORE_CARD_WIDTH = 230;
-const SCORE_FONT = new PhetFont({ size: 34, weight: "bold" });
+const SCORE_CARD_WIDTH: number = SCORE_CARD_NODE_SETTINGS.SCORE_CARD_WIDTH;
+const SCORE_FONT = new PhetFont({ size: SCORE_CARD_NODE_SETTINGS.SCORE_FONT_SIZE, weight: "bold" });
 
 export class ScoreCardNode extends Node {
   private readonly disposeScoreCardNode: () => void;
@@ -47,22 +48,22 @@ export class ScoreCardNode extends Node {
           new Text(scoreStringProperty, {
             font: SCORE_FONT,
             fill: MotionMatchColors.accentColorProperty,
-            maxWidth: SCORE_CARD_WIDTH - 32,
+            maxWidth: SCORE_CARD_WIDTH - SCORE_CARD_NODE_SETTINGS.CREATE_CONTENT_MAX_WIDTH_OFFSET,
           }),
         ],
       });
 
     const livePanel = new MotionMatchPanel(createContent(), {
       visibleProperty: liveVisibleProperty,
-      xMargin: 16,
-      yMargin: 16,
+      xMargin: SCORE_CARD_NODE_SETTINGS.LIVE_PANEL_X_MARGIN,
+      yMargin: SCORE_CARD_NODE_SETTINGS.LIVE_PANEL_Y_MARGIN,
     });
     const finalPanel = new MotionMatchPanel(createContent(), {
       visibleProperty: finalVisibleProperty,
       stroke: MotionMatchColors.accentColorProperty,
-      lineWidth: 4,
-      xMargin: 16,
-      yMargin: 16,
+      lineWidth: SCORE_CARD_NODE_SETTINGS.FINAL_PANEL_LINE_WIDTH,
+      xMargin: SCORE_CARD_NODE_SETTINGS.FINAL_PANEL_X_MARGIN,
+      yMargin: SCORE_CARD_NODE_SETTINGS.FINAL_PANEL_Y_MARGIN,
     });
 
     super({ children: [livePanel, finalPanel] });

@@ -1,3 +1,4 @@
+import { MOTION_MATCH_SCREEN_VIEW_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * MotionMatchScreenView.ts
  *
@@ -33,7 +34,7 @@ import { RunControl } from "./RunControl.js";
 import { ScoreCardNode } from "./ScoreCardNode.js";
 import { SensorPanel } from "./SensorPanel.js";
 
-const LEGEND_FONT = new PhetFont(12);
+const LEGEND_FONT = new PhetFont(MOTION_MATCH_SCREEN_VIEW_SETTINGS.LEGEND_FONT_SIZE);
 
 type MotionMatchScreenViewSelfOptions = {
   readonly a11y: ScreenA11yStrings;
@@ -88,7 +89,7 @@ export class MotionMatchScreenView extends ScreenView {
     // Dash pattern in the swatch matches the dash pattern on the chart, so the
     // legend is readable in greyscale and by a colour-blind student.
     const legend = new HBox({
-      spacing: 24,
+      spacing: MOTION_MATCH_SCREEN_VIEW_SETTINGS.LEGEND_SPACING,
       children: [
         MotionMatchScreenView.createLegendEntry(
           legendStrings.targetStringProperty,
@@ -101,8 +102,8 @@ export class MotionMatchScreenView extends ScreenView {
           [],
         ),
       ],
-      left: SCREEN_VIEW_MARGIN + 44,
-      top: chartNode.bottom + 6,
+      left: SCREEN_VIEW_MARGIN + MOTION_MATCH_SCREEN_VIEW_SETTINGS.LEGEND_LEFT_OFFSET,
+      top: chartNode.bottom + MOTION_MATCH_SCREEN_VIEW_SETTINGS.LEGEND_TOP_OFFSET,
     });
     this.addChild(legend);
 
@@ -119,7 +120,7 @@ export class MotionMatchScreenView extends ScreenView {
         : {}),
     });
     playAreaNode.left = SCREEN_VIEW_MARGIN;
-    playAreaNode.top = legend.bottom + 10;
+    playAreaNode.top = legend.bottom + MOTION_MATCH_SCREEN_VIEW_SETTINGS.CONSTRUCTOR_TOP_OFFSET;
     this.addChild(playAreaNode);
 
     // On the pointer-driven simulation screen, begin each selected challenge
@@ -146,7 +147,7 @@ export class MotionMatchScreenView extends ScreenView {
       showVelocityVectorsProperty,
     );
     motionDiagramNode.left = SCREEN_VIEW_MARGIN;
-    motionDiagramNode.top = playAreaNode.bottom + 10;
+    motionDiagramNode.top = playAreaNode.bottom + MOTION_MATCH_SCREEN_VIEW_SETTINGS.CONSTRUCTOR_TOP_OFFSET;
     this.addChild(motionDiagramNode);
 
     const profileControl = new ProfileControl({
@@ -166,7 +167,7 @@ export class MotionMatchScreenView extends ScreenView {
       new Text(strings.getShowMotionDiagramStringProperty(), {
         font: LEGEND_FONT,
         fill: MotionMatchColors.textColorProperty,
-        maxWidth: 300,
+        maxWidth: MOTION_MATCH_SCREEN_VIEW_SETTINGS.MOTION_DIAGRAM_CHECKBOX_MAX_WIDTH,
       }),
       { accessibleName: strings.getShowMotionDiagramStringProperty() },
     );
@@ -175,7 +176,7 @@ export class MotionMatchScreenView extends ScreenView {
       new Text(strings.getShowGraphPointsStringProperty(), {
         font: LEGEND_FONT,
         fill: MotionMatchColors.textColorProperty,
-        maxWidth: 276,
+        maxWidth: MOTION_MATCH_SCREEN_VIEW_SETTINGS.MOTION_DIAGRAM_LABELS_CHECKBOX_MAX_WIDTH,
       }),
       {
         accessibleName: strings.getShowGraphPointsStringProperty(),
@@ -187,7 +188,7 @@ export class MotionMatchScreenView extends ScreenView {
       new Text(strings.getShowVelocityVectorsStringProperty(), {
         font: LEGEND_FONT,
         fill: MotionMatchColors.textColorProperty,
-        maxWidth: 276,
+        maxWidth: MOTION_MATCH_SCREEN_VIEW_SETTINGS.VELOCITY_VECTORS_CHECKBOX_MAX_WIDTH,
       }),
       {
         accessibleName: strings.getShowVelocityVectorsStringProperty(),
@@ -196,20 +197,28 @@ export class MotionMatchScreenView extends ScreenView {
     );
     const motionDiagramControl = new VBox({
       align: "left",
-      spacing: 7,
+      spacing: MOTION_MATCH_SCREEN_VIEW_SETTINGS.MOTION_DIAGRAM_CONTROL_SPACING,
       children: [
         motionDiagramCheckbox,
         new HBox({
-          spacing: 6,
+          spacing: MOTION_MATCH_SCREEN_VIEW_SETTINGS.MOTION_DIAGRAM_CONTROL_ITEM_2_SPACING,
           children: [
-            new Rectangle(0, 0, 18, 1, { fill: null, stroke: null, pickable: false }),
+            new Rectangle(0, 0, MOTION_MATCH_SCREEN_VIEW_SETTINGS.MOTION_DIAGRAM_CONTROL_WIDTH, 1, {
+              fill: null,
+              stroke: null,
+              pickable: false,
+            }),
             motionDiagramLabelsCheckbox,
           ],
         }),
         new HBox({
-          spacing: 6,
+          spacing: MOTION_MATCH_SCREEN_VIEW_SETTINGS.MOTION_DIAGRAM_CONTROL_ITEM_3_SPACING,
           children: [
-            new Rectangle(0, 0, 18, 1, { fill: null, stroke: null, pickable: false }),
+            new Rectangle(0, 0, MOTION_MATCH_SCREEN_VIEW_SETTINGS.MOTION_DIAGRAM_CONTROL_WIDTH, 1, {
+              fill: null,
+              stroke: null,
+              pickable: false,
+            }),
             velocityVectorsCheckbox,
           ],
         }),
@@ -230,7 +239,7 @@ export class MotionMatchScreenView extends ScreenView {
 
     const controlColumn = new VBox({
       align: "left",
-      spacing: 14,
+      spacing: MOTION_MATCH_SCREEN_VIEW_SETTINGS.CONTROL_COLUMN_SPACING,
       children: [profileControl, motionDiagramControl, runControl, ...(sensorPanel === null ? [] : [sensorPanel])],
       right: this.layoutBounds.maxX - SCREEN_VIEW_MARGIN,
       top: SCREEN_VIEW_MARGIN,
@@ -250,7 +259,7 @@ export class MotionMatchScreenView extends ScreenView {
 
     const scoreCard = new ScoreCardNode(model);
     scoreCard.right = this.layoutBounds.maxX - SCREEN_VIEW_MARGIN;
-    scoreCard.bottom = resetAllButton.top - 14;
+    scoreCard.bottom = resetAllButton.top - MOTION_MATCH_SCREEN_VIEW_SETTINGS.CONSTRUCTOR_BOTTOM_OFFSET;
     this.addChild(scoreCard);
 
     this.addChild(comboBoxListParent);
@@ -289,10 +298,18 @@ export class MotionMatchScreenView extends ScreenView {
 
   private static createLegendEntry(labelProperty: TReadOnlyProperty<string>, stroke: TColor, lineDash: number[]): Node {
     return new HBox({
-      spacing: 6,
+      spacing: MOTION_MATCH_SCREEN_VIEW_SETTINGS.CREATE_LEGEND_ENTRY_SPACING,
       children: [
-        new Line(0, 0, 22, 0, { stroke: stroke, lineWidth: 2.5, lineDash: lineDash }),
-        new Text(labelProperty, { font: LEGEND_FONT, fill: MotionMatchColors.textColorProperty, maxWidth: 120 }),
+        new Line(0, 0, MOTION_MATCH_SCREEN_VIEW_SETTINGS.CREATE_LEGEND_ENTRY_END_X, 0, {
+          stroke: stroke,
+          lineWidth: MOTION_MATCH_SCREEN_VIEW_SETTINGS.CREATE_LEGEND_ENTRY_LINE_WIDTH,
+          lineDash: lineDash,
+        }),
+        new Text(labelProperty, {
+          font: LEGEND_FONT,
+          fill: MotionMatchColors.textColorProperty,
+          maxWidth: MOTION_MATCH_SCREEN_VIEW_SETTINGS.CREATE_LEGEND_ENTRY_MAX_WIDTH,
+        }),
       ],
     });
   }

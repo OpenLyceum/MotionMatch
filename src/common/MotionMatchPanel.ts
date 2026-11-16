@@ -1,3 +1,4 @@
+import { MOTION_MATCH_PANEL_SETTINGS } from "../MotionMatchConstants.js";
 /**
  * MotionMatchPanel.ts
  *
@@ -40,8 +41,8 @@ export class MotionMatchPanel extends Panel {
         fill: MotionMatchColors.panelBackgroundColorProperty,
         stroke: MotionMatchColors.panelBorderColorProperty,
         cornerRadius: PANEL_CORNER_RADIUS,
-        xMargin: 12,
-        yMargin: 10,
+        xMargin: MOTION_MATCH_PANEL_SETTINGS.OPTIONS_X_MARGIN,
+        yMargin: MOTION_MATCH_PANEL_SETTINGS.OPTIONS_Y_MARGIN,
       },
       providedOptions,
     );

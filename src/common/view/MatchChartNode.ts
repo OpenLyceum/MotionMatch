@@ -1,3 +1,4 @@
+import { MATCH_CHART_NODE_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * MatchChartNode.ts
  *
@@ -48,20 +49,20 @@ import { GraphMode } from "../model/GraphMode.js";
 import type { MotionMatchModel } from "../model/MotionMatchModel.js";
 
 /** Pixel insets reserved for the tick labels around the plot rectangle. */
-const LEFT_INSET = 44;
-const BOTTOM_INSET = 36;
-const TOP_INSET = 8;
-const RIGHT_INSET = 10;
+const LEFT_INSET: number = MATCH_CHART_NODE_SETTINGS.LEFT_INSET;
+const BOTTOM_INSET: number = MATCH_CHART_NODE_SETTINGS.BOTTOM_INSET;
+const TOP_INSET: number = MATCH_CHART_NODE_SETTINGS.TOP_INSET;
+const RIGHT_INSET: number = MATCH_CHART_NODE_SETTINGS.RIGHT_INSET;
 
-const TICK_LABEL_FONT = new PhetFont(11);
-const AXIS_LABEL_FONT = new PhetFont(13);
+const TICK_LABEL_FONT = new PhetFont(MATCH_CHART_NODE_SETTINGS.TICK_LABEL_FONT_SIZE);
+const AXIS_LABEL_FONT = new PhetFont(MATCH_CHART_NODE_SETTINGS.AXIS_LABEL_FONT_SIZE);
 
 /**
  * Points used to draw the target curve and the band. 200 over a 10 s window is
  * one point every 50 ms — the same rate the trace is sampled at, so the target
  * and a perfect trace are drawn with identical fidelity.
  */
-const CURVE_SAMPLE_COUNT = 200;
+const CURVE_SAMPLE_COUNT: number = MATCH_CHART_NODE_SETTINGS.CURVE_SAMPLE_COUNT;
 
 export class MatchChartNode extends Node {
   private readonly model: MotionMatchModel;
@@ -102,11 +103,11 @@ export class MatchChartNode extends Node {
     // Orientation.VERTICAL spaces marks along y, producing horizontal lines.
     this.yGridLines = new GridLineSet(this.chartTransform, Orientation.VERTICAL, POSITION_TICK_SPACING_M, {
       stroke: MotionMatchColors.chartGridColorProperty,
-      lineWidth: 0.5,
+      lineWidth: MATCH_CHART_NODE_SETTINGS.Y_GRID_LINES_LINE_WIDTH,
     });
     const xGridLines = new GridLineSet(this.chartTransform, Orientation.HORIZONTAL, TIME_TICK_SPACING_S, {
       stroke: MotionMatchColors.chartGridColorProperty,
-      lineWidth: 0.5,
+      lineWidth: MATCH_CHART_NODE_SETTINGS.X_GRID_LINES_LINE_WIDTH,
     });
 
     this.yTickMarks = new TickMarkSet(this.chartTransform, Orientation.VERTICAL, POSITION_TICK_SPACING_M, {
@@ -147,15 +148,15 @@ export class MatchChartNode extends Node {
 
     this.targetPlot = new LinePlot(this.chartTransform, [], {
       stroke: MotionMatchColors.targetCurveColorProperty,
-      lineWidth: 2.5,
+      lineWidth: MATCH_CHART_NODE_SETTINGS.TARGET_PLOT_LINE_WIDTH,
       // Dashed as well as coloured, so the target stays distinguishable from
       // the student's trace without relying on colour.
-      lineDash: [8, 5],
+      lineDash: [MATCH_CHART_NODE_SETTINGS.CONSTRUCTOR_LINE_DASH_DASH, 5],
     });
 
     this.tracePlot = new LinePlot(this.chartTransform, [], {
       stroke: MotionMatchColors.traceColorProperty,
-      lineWidth: 2.5,
+      lineWidth: MATCH_CHART_NODE_SETTINGS.TRACE_PLOT_LINE_WIDTH,
     });
 
     const graphPoints = new Node({ visibleProperty: showGraphPointsProperty });
@@ -197,9 +198,9 @@ export class MatchChartNode extends Node {
     // with the graph mode, so reposition whenever their bounds change.
     const layOutLabels = () => {
       xAxisLabel.centerX = LEFT_INSET + plotWidth / 2;
-      xAxisLabel.top = TOP_INSET + plotHeight + 18;
+      xAxisLabel.top = TOP_INSET + plotHeight + MATCH_CHART_NODE_SETTINGS.LAY_OUT_LABELS_TOP_OFFSET;
       yAxisLabel.centerY = TOP_INSET + plotHeight / 2;
-      yAxisLabel.right = LEFT_INSET - 28;
+      yAxisLabel.right = LEFT_INSET - MATCH_CHART_NODE_SETTINGS.LAY_OUT_LABELS_RIGHT_OFFSET;
     };
     xAxisLabel.boundsProperty.link(layOutLabels);
     yAxisLabel.boundsProperty.link(layOutLabels);
@@ -249,7 +250,11 @@ export class MatchChartNode extends Node {
           MotionMatchColors.graphPointColorProperties[index % MotionMatchColors.graphPointColorProperties.length] ??
           MotionMatchColors.traceColorProperty;
         graphPoints.addChild(
-          new Circle(3.5, { center: point, fill: color, stroke: MotionMatchColors.chartBackgroundColorProperty }),
+          new Circle(MATCH_CHART_NODE_SETTINGS.CONSTRUCTOR_RADIUS, {
+            center: point,
+            fill: color,
+            stroke: MotionMatchColors.chartBackgroundColorProperty,
+          }),
         );
       }
     };
