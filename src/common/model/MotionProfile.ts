@@ -48,7 +48,7 @@ export type Knot = {
  * @internal Exported for unit tests; not part of the application API.
  */
 export function smoothstep(t: number): number {
-  const x = t <= 0 ? 0 : t >= 1 ? 1 : t;
+  const x = t <= 0 ? 0 : Math.min(t, 1);
   return x * x * (3 - 2 * x);
 }
 
