@@ -187,15 +187,15 @@ export const MOTION_MATCH_SCREEN_ICONS_SETTINGS = {
 
 /** Settings for common/model/MotionMatchModel.ts. */
 export const MOTION_MATCH_MODEL_SETTINGS = {
-  /** * A dt larger than this is a tab that was backgrounded, not a slow frame. Clamping stops the accumulator from firing hundreds of catch-up samples and recording a flat line for time the student was not actually there for. */
+  /** A dt larger than this is a tab that was backgrounded, not a slow frame. Clamping stops the accumulator from firing hundreds of catch-up samples and recording a flat line for time the student was not actually there for. */
   MAXIMUM_DT_S: 0.25,
-  /** * Slack for the countdown comparison. Three seconds of 0.05 s ticks sums to 2.9999999999999996, which without this would hold the countdown for one extra frame. */
+  /** Slack for the countdown comparison. Three seconds of 0.05 s ticks sums to 2.9999999999999996, which without this would hold the countdown for one extra frame. */
   TIME_EPSILON_S: 1e-9,
 } as const;
 
 /** Settings for common/model/MotionSensorSource.ts. */
 export const MOTION_SENSOR_SOURCE_SETTINGS = {
-  /** * How long a stream may say nothing before the run gives up on it and polls instead. Long enough to cover a slow first sample at the lowest rate the preference allows, short enough that a run of ten seconds still gets a trace. */
+  /** How long a stream may say nothing before the run gives up on it and polls instead. Long enough to cover a slow first sample at the lowest rate the preference allows, short enough that a run of ten seconds still gets a trace. */
   STREAM_SILENCE_TIMEOUT_MS: 1000,
 } as const;
 
@@ -229,7 +229,7 @@ export const MATCH_CHART_NODE_SETTINGS = {
   TICK_LABEL_FONT_SIZE: 11,
   /** Axis label font size (px). */
   AXIS_LABEL_FONT_SIZE: 13,
-  /** * Points used to draw the target curve and the band. 200 over a 10 s window is one point every 50 ms — the same rate the trace is sampled at, so the target and a perfect trace are drawn with identical fidelity. */
+  /** Points used to draw the target curve and the band. 200 over a 10 s window is one point every 50 ms — the same rate the trace is sampled at, so the target and a perfect trace are drawn with identical fidelity. */
   CURVE_SAMPLE_COUNT: 200,
   /** Y grid lines line width (px). */
   Y_GRID_LINES_LINE_WIDTH: 0.5,
@@ -421,13 +421,13 @@ export const WALKER_NODE_SETTINGS = {
 
   /** Proportions of the figure, as fractions of WALKER_HEIGHT. */
   HEAD_RADIUS: 0.13,
-  /** Shoulder y (px). */
+  /** Shoulder height as a fraction of WALKER_HEIGHT. */
   SHOULDER_Y: 0.3,
-  /** Hip y (px). */
+  /** Hip height as a fraction of WALKER_HEIGHT. */
   HIP_Y: 0.62,
-  /** Arm span (px). */
+  /** Half-width of the arm span as a fraction of WALKER_HEIGHT. */
   ARM_SPAN: 0.16,
-  /** Leg span (px). */
+  /** Half-width of the stance as a fraction of WALKER_HEIGHT. */
   LEG_SPAN: 0.15,
 } as const;
 

@@ -18,6 +18,7 @@ the profiles, the derivative relationship and the scoring rule are in
 
 | File | Purpose |
 |---|---|
+| `src/MotionMatchConstants.ts` | Ranges, defaults, sampling, layout, chart and walker proportions |
 | `src/common/model/MotionMatchModel.ts` | The whole activity: run state machine, fixed-rate sampling, scoring |
 | `src/common/model/profiles.ts` | The nine curves A–I |
 | `src/common/model/MotionProfile.ts` | Profile shapes + corner smoothing for velocity targets |
