@@ -27,8 +27,9 @@ the profiles, the derivative relationship and the scoring rule are in
 | `src/common/model/PositionSource.ts` | `TPositionSource` — the seam between the two screens |
 | `src/common/model/MotionSensorSource.ts` | The PASCO link: transport choice, sampling loop, never-rejecting connect |
 | `src/common/model/transportSupport.ts` | Whether this browser has Web Bluetooth / WebUSB at all |
-| `src/sensor/model/MotionSensorDevice.ts` | `TMotionSensorDevice` — the seam between the two transports |
-| `src/sensor/model/UsbMotionSensor.ts` | WebUSB sibling of `BluetoothMotionSensor`; same packets |
+| `src/common/model/hardware/MotionSensorDevice.ts` | `TMotionSensorDevice` — the seam between the two transports |
+| `src/common/model/hardware/BluetoothMotionSensor.ts` | Web Bluetooth transport |
+| `src/common/model/hardware/UsbMotionSensor.ts` | WebUSB sibling of `BluetoothMotionSensor`; same packets |
 | `src/common/view/MotionMatchScreenView.ts` | **One** ScreenView, used by both screens |
 | `src/common/view/MatchChartNode.ts` | bamboo chart: target, tolerance band, live trace |
 | `src/common/view/PlayAreaNode.ts` | Track, sensor, walker + drag / keyboard listeners |
