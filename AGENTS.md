@@ -56,6 +56,13 @@ A11y strings live under the `a11y` key of each locale JSON, read through `String
 - Keyboard Shortcuts dialog: `src/common/view/MotionMatchKeyboardHelpContent.ts`
 - Keyboard-draggable objects: `src/common/view/PlayAreaNode.ts`
 
+## Compliance carve-outs
+
+- `memory-leak:MatchChartNode`: bamboo chart / Multilink chrome is not WeakRef-collectable under happy-dom after dispose.
+- `memory-leak:RunControl`: PlayPauseButton/panel chrome retained under happy-dom after dispose.
+- `memory-leak:ProfileControl`: ComboBox listParent wiring is ScreenView-coupled and not WeakRef-collectable under happy-dom.
+- `memory-leak:SensorPanel`: connection-panel DerivedProperty/button chrome is not WeakRef-collectable under happy-dom after dispose.
+
 ## Testing
 
 | Path | Covers |
