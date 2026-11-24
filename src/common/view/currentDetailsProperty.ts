@@ -12,6 +12,7 @@
 
 import type { TReadOnlyProperty } from "scenerystack/axon";
 import { DerivedProperty, PatternStringProperty } from "scenerystack/axon";
+import { roundSymmetric } from "scenerystack/dot";
 import type { ScreenA11yStrings } from "../../i18n/StringManager.js";
 import { StringManager } from "../../i18n/StringManager.js";
 import { RUN_DURATION_S } from "../../MotionMatchConstants.js";
@@ -36,7 +37,7 @@ export function createCurrentDetailsProperty(model: MotionMatchModel, a11y: Scre
   const scoreNumberProperty = new DerivedProperty([model.scoreProperty], (score) => score ?? 0);
   // Spoken time is rounded to whole seconds: a screen reader announcing two
   // decimal places twenty times a second is unusable.
-  const wholeSecondsProperty = new DerivedProperty([model.runTimeProperty], (time) => Math.round(time));
+  const wholeSecondsProperty = new DerivedProperty([model.runTimeProperty], (time) => roundSymmetric(time));
 
   const readyProperty = new PatternStringProperty(a11y.currentDetails.readyStringProperty, {
     letter: letterProperty,

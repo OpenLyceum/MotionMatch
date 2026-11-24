@@ -1,3 +1,4 @@
+import { roundSymmetric } from "scenerystack/dot";
 import { MOTION_MATCH_PREFERENCES_NODE_SETTINGS } from "../MotionMatchConstants.js";
 /**
  * MotionMatchPreferencesNode.ts
@@ -41,7 +42,7 @@ export class MotionMatchPreferencesNode extends Node {
           decimalPlaces: MOTION_MATCH_PREFERENCES_NODE_SETTINGS.TOLERANCE_CONTROL_DECIMAL_PLACES,
           textOptions: { font: LABEL_FONT },
         },
-        sliderOptions: { constrainValue: (value: number) => Math.round(value * 20) / 20 },
+        sliderOptions: { constrainValue: (value: number) => roundSymmetric(value * 20) / 20 },
         ...(tandem ? { tandem: tandem.createTandem("toleranceControl") } : {}),
       },
     );
@@ -62,7 +63,7 @@ export class MotionMatchPreferencesNode extends Node {
         delta: 1,
         titleNodeOptions: { font: LABEL_FONT, fill: MotionMatchColors.controlSurfaceTextColorProperty },
         numberDisplayOptions: { decimalPlaces: 0, textOptions: { font: LABEL_FONT } },
-        sliderOptions: { constrainValue: (value: number) => Math.round(value) },
+        sliderOptions: { constrainValue: (value: number) => roundSymmetric(value) },
         ...(tandem ? { tandem: tandem.createTandem("sampleRateControl") } : {}),
       },
     );

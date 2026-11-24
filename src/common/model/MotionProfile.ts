@@ -148,12 +148,16 @@ function smoothedVelocity(shape: ProfileShape, time: number): number {
  * is deliberately not localized, so a class working from the printed worksheet
  * and a class working from the sim are talking about the same curve.
  */
+import type stringsEn from "../../i18n/strings_en.json";
+
+type ProfileId = keyof (typeof stringsEn)["profiles"];
+
 export class MotionProfile {
-  public readonly id: string;
+  public readonly id: ProfileId;
   public readonly letter: string;
   private readonly shape: ProfileShape;
 
-  public constructor(id: string, letter: string, shape: ProfileShape) {
+  public constructor(id: ProfileId, letter: string, shape: ProfileShape) {
     this.id = id;
     this.letter = letter;
     this.shape = shape;

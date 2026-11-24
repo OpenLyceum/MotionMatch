@@ -325,6 +325,7 @@ export class MotionSensorSource implements TPositionSource {
     if (this.streamWatchdogId !== null) {
       clearTimeout(this.streamWatchdogId);
     }
+    // biome-ignore lint/plugin/no-native-timer: async host/hardware delay (not sim step)
     this.streamWatchdogId = setTimeout(() => {
       this.streamWatchdogId = null;
       if (generation !== this.samplingGeneration || !this.samplingRequested || !this.isStreaming) {
@@ -348,6 +349,7 @@ export class MotionSensorSource implements TPositionSource {
     }
     const generation = ++this.pollingGeneration;
     this.poll(generation).catch(() => undefined);
+    // biome-ignore lint/plugin/no-native-timer: async host/hardware delay (not sim step)
     this.pollTimerId = setInterval(() => {
       this.poll(generation).catch(() => undefined);
     }, this.samplePeriodMs);

@@ -1,3 +1,4 @@
+import { roundSymmetric } from "scenerystack/dot";
 import { MOTION_MATCH_MODEL_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * MotionMatchModel.ts
@@ -48,8 +49,8 @@ const MAXIMUM_DT_S: number = MOTION_MATCH_MODEL_SETTINGS.MAXIMUM_DT_S;
  * adding 0.05 drifts, and a run that ends one sample early or late would make
  * scores incomparable between runs.
  */
-const TOTAL_SAMPLES = Math.round(RUN_DURATION_S / SAMPLE_PERIOD_S);
-const TOTAL_COUNTDOWN_SAMPLES = Math.round(COUNTDOWN_S / SAMPLE_PERIOD_S);
+const TOTAL_SAMPLES = roundSymmetric(RUN_DURATION_S / SAMPLE_PERIOD_S);
+const TOTAL_COUNTDOWN_SAMPLES = roundSymmetric(COUNTDOWN_S / SAMPLE_PERIOD_S);
 
 /**
  * Slack for the countdown comparison. Three seconds of 0.05 s ticks sums to
