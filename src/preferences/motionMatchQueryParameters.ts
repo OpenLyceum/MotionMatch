@@ -42,8 +42,9 @@ const motionMatchQueryParameters = QueryStringMachine.getAll({
    * screen. For hardware bring-up, not for students.
    */
   showDiagnostics: {
-    type: "boolean",
+    type: "custom",
     defaultValue: false,
+    parse: (value: string | null): boolean => value === null || value === "true",
   },
 
   /**
