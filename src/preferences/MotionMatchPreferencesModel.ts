@@ -52,7 +52,7 @@ export class MotionMatchPreferencesModel {
     );
 
     this.showMotionDescriptionsProperty = new BooleanProperty(
-      false,
+      motionMatchQueryParameters.showMotionDescriptions,
       tandem ? { tandem: tandem.createTandem("showMotionDescriptionsProperty") } : undefined,
     );
   }

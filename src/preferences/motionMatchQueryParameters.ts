@@ -47,6 +47,13 @@ const motionMatchQueryParameters = QueryStringMachine.getAll({
     parse: (value: string | null): boolean => value === null || value === "true",
   },
 
+  /** Reveal the motion needed to match each curve. */
+  showMotionDescriptions: {
+    type: "boolean",
+    defaultValue: false,
+    public: true,
+  },
+
   /**
    * How often to take a reading from the sensor, in hertz. Lower is gentler on
    * a flaky link; higher is more responsive and more likely to saturate one.
