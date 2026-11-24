@@ -1,3 +1,4 @@
+import { roundSymmetric } from "scenerystack/dot";
 import { SCORING_SETTINGS } from "../../MotionMatchConstants.js";
 /**
  * scoring.ts
@@ -43,5 +44,5 @@ export function scoreRun(samples: readonly Sample[], target: (time: number) => n
     }
   }
 
-  return Math.round((PERFECT_SCORE * matched) / samples.length);
+  return roundSymmetric((PERFECT_SCORE * matched) / samples.length);
 }

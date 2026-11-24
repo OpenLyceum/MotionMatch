@@ -2,6 +2,7 @@ import { MOTION_DIAGRAM_NODE_SETTINGS } from "../../MotionMatchConstants.js";
 /** Equal-time position dots that make changes in speed visible spatially. */
 
 import type { TReadOnlyProperty } from "scenerystack/axon";
+import { roundSymmetric } from "scenerystack/dot";
 import { Circle, Line, Node, Rectangle, Text } from "scenerystack/scenery";
 import { ArrowNode, PhetFont } from "scenerystack/scenery-phet";
 import { StringManager } from "../../i18n/StringManager.js";
@@ -13,7 +14,7 @@ import { LinearTransform } from "./LinearTransform.js";
 const HEIGHT: number = MOTION_DIAGRAM_NODE_SETTINGS.HEIGHT;
 const EDGE_INSET: number = MOTION_DIAGRAM_NODE_SETTINGS.EDGE_INSET;
 const DOT_PERIOD_S = 1;
-const SAMPLES_PER_DOT = Math.round(DOT_PERIOD_S / SAMPLE_PERIOD_S);
+const SAMPLES_PER_DOT = roundSymmetric(DOT_PERIOD_S / SAMPLE_PERIOD_S);
 const VECTOR_Y_OFFSET: number = MOTION_DIAGRAM_NODE_SETTINGS.VECTOR_Y_OFFSET;
 
 export class MotionDiagramNode extends Node {
