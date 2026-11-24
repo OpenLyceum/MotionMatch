@@ -58,7 +58,7 @@ export class ProfileControl extends MotionMatchPanel {
       providedOptions.profileProperty,
       PROFILES.map((profile) => {
         // LocalizedString suffixes every leaf key, so profile "a" is `aStringProperty`.
-        const descriptionProperty = descriptions[`${profile.id}StringProperty` as keyof typeof descriptions];
+        const descriptionProperty = descriptions[`${profile.id}StringProperty`];
         const labelProperty = new PatternStringProperty(labelPattern, {
           letter: profile.letter,
           description: descriptionProperty,
